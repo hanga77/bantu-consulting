@@ -1,0 +1,28 @@
+Bantu Consulting - Website Platform
+Version: 1.0.0
+Release Date: January 2024
+
+Features:
+- Complete public website
+- Administrative panel
+- Project management
+- Team management
+- Service management
+- SEO optimization
+- Responsive design
+- Email notifications
+
+System Requirements:
+- PHP 7.4 or higher
+- MySQL 5.7 or higher
+- Apache with mod_rewrite
+
+Installation:
+1. Run install.php
+2. Generate sample images
+3. Login with admin/admin123
+4. Change password immediately
+5. Customize site settings
+6. Delete install.php
+
+Support: contact@bantu-consulting.com

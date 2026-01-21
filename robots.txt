@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /actions/
+Disallow: /config/
+Disallow: /generate-sample-images.php
+Disallow: /install.php
+Disallow: /repair.php
+
+Sitemap: http://localhost/Bantu-test2/sitemap.php
