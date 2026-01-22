@@ -19,6 +19,16 @@ CREATE TABLE services (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Table des fichiers PDF pour services
+CREATE TABLE service_files (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    service_id INT,
+    file_name VARCHAR(255),
+    file_path VARCHAR(255),
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE
+);
+
 -- Table des projets
 CREATE TABLE projects (
     id INT PRIMARY KEY AUTO_INCREMENT,

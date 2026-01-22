@@ -74,6 +74,19 @@ $section = preg_replace('/[^a-z0-9_-]/', '', $section);
             </a>
         </div>
 
+        <!-- Départements -->
+        <div class="col-md-3">
+            <a href="?page=admin-dashboard&section=departments" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm card-hover">
+                    <div class="card-body text-center">
+                        <i class="fas fa-sitemap fa-3x text-info mb-3"></i>
+                        <h5 class="card-title">Départements</h5>
+                        <p class="card-text text-muted">Gérer les pôles</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
         <!-- Services -->
         <div class="col-md-3">
             <a href="?page=admin-dashboard&section=services" class="text-decoration-none">
@@ -152,6 +165,9 @@ $section = preg_replace('/[^a-z0-9_-]/', '', $section);
                 </a>
                 <a href="?page=admin-dashboard&section=teams" class="list-group-item list-group-item-action <?php echo $section === 'teams' ? 'active' : ''; ?>">
                     <i class="fas fa-users"></i> Équipes
+                </a>
+                <a href="?page=admin-dashboard&section=departments" class="list-group-item list-group-item-action <?php echo $section === 'departments' ? 'active' : ''; ?>">
+                    <i class="fas fa-sitemap"></i> Départements
                 </a>
                 <a href="?page=admin-dashboard&section=services" class="list-group-item list-group-item-action <?php echo $section === 'services' ? 'active' : ''; ?>">
                     <i class="fas fa-cogs"></i> Services

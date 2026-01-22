@@ -2,7 +2,12 @@
 include 'templates/header.php';
 
 $about = $pdo->query("SELECT * FROM about LIMIT 1")->fetch();
-$teams = $pdo->query("SELECT * FROM teams ORDER BY importance DESC, name")->fetchAll();
+
+// Récupérer tous les membres avec département
+$teams = $pdo->query("SELECT * FROM teams WHERE department_id IS NOT NULL AND department_id > 0 ORDER BY importance DESC, name")->fetchAll();
+
+// Récupérer les membres sans département (secrétaire, accueil, etc.)
+$teams_no_dept = $pdo->query("SELECT * FROM teams WHERE department_id IS NULL OR department_id = 0 ORDER BY importance DESC, name")->fetchAll();
 ?>
 
 <!-- PRÉSENTATION -->
@@ -87,4 +92,52 @@ $teams = $pdo->query("SELECT * FROM teams ORDER BY importance DESC, name")->fetc
     </div>
 </section>
 
+<!-- MEMBRES SANS DÉPARTEMENT (Fonctions Support/Transversales) -->
+<?php if (!empty($teams_no_dept)): ?>
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="display-5 fw-bold mb-3">Équipe Support & Transversale</h2>
+            <p class="text-muted fs-6">Nos collaborateurs en fonctions transversales</p>
+        </div>
+
+        <div class="row g-4">
+            <?php foreach ($teams_no_dept as $index => $member): ?>
+            <div class="col-md-4 col-sm-6 mb-4" data-aos="fade-up" data-aos-delay="<?php echo ($index % 3) * 100; ?>">
+                <div class="card h-100 border-0 shadow-sm card-hover overflow-hidden">
+                    <div class="position-relative overflow-hidden">
+                        <?php if (!empty($member['image'])): ?>
+                        <img src="uploads/<?php echo htmlspecialchars($member['image']); ?>" 
+                             class="card-img-top w-100" alt="<?php echo htmlspecialchars($member['name']); ?>" 
+                             style="height: 250px; object-fit: cover; transition: transform 0.3s;">
+                        <?php else: ?>
+                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center w-100" style="height: 250px;">
+                            <i class="fas fa-user fa-4x"></i>
+                        </div>
+                        <?php endif; ?>
+                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" 
+                             style="background: rgba(30, 64, 175, 0.85); opacity: 0; transition: opacity 0.3s;">
+                            <div class="text-center text-white">
+                                <i class="fas fa-search-plus fa-3x mb-2"></i>
+                                <p class="mb-0 fw-bold">Voir profil</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        <h5 class="card-title fw-bold mb-2"><?php echo htmlspecialchars($member['name']); ?></h5>
+                        <p class="card-text mb-3">
+                            <strong class="d-block text-primary mb-1"><?php echo htmlspecialchars($member['position']); ?></strong>
+                            <?php if (!empty($member['importance'])): ?>
+                            <span class="badge bg-warning text-dark"><i class="fas fa-briefcase"></i> <?php echo htmlspecialchars($member['importance']); ?></span>
+                            <?php endif; ?>
+                        </p>
+                        <p class="text-muted small mb-0"><?php echo htmlspecialchars(substr($member['role'] ?? '', 0, 100)); ?></p>
+                    </div>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
 <?php include 'templates/footer.php'; ?>

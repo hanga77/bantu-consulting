@@ -12,6 +12,11 @@ if (!$service) {
     exit;
 }
 
+// Récupérer les fichiers PDF du service
+$files_stmt = $pdo->prepare("SELECT * FROM service_files WHERE service_id = ? ORDER BY uploaded_at DESC");
+$files_stmt->execute([$id]);
+$service_files = $files_stmt->fetchAll();
+
 // Récupérer les autres services pour la navigation
 $all_services = $pdo->query("SELECT id, title FROM services ORDER BY id")->fetchAll();
 $current_index = array_search($id, array_column($all_services, 'id'));
@@ -82,6 +87,33 @@ $next_service = $current_index < count($all_services) - 1 ? $all_services[$curre
                     </div>
                 </div>
             </div>
+
+            <!-- Fichiers PDF -->
+            <?php if (!empty($service_files)): ?>
+            <div class="card border-0 shadow-lg mb-5 bg-light">
+                <div class="card-header bg-white border-bottom">
+                    <h3 class="mb-0 fw-bold"><i class="fas fa-file-pdf text-danger"></i> Documents & Ressources</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <?php foreach ($service_files as $file): ?>
+                        <div class="col-md-12">
+                            <a href="uploads/services/<?php echo htmlspecialchars($file['file_path']); ?>" target="_blank" class="list-group-item list-group-item-action p-3 border rounded d-flex justify-content-between align-items-center hover-link">
+                                <div>
+                                    <i class="fas fa-file-pdf text-danger"></i> 
+                                    <strong><?php echo htmlspecialchars($file['file_name']); ?></strong>
+                                    <br>
+                                    <small class="text-muted"><?php echo date('d/m/Y', strtotime($file['uploaded_at'])); ?></small>
+                                </div>
+                                <i class="fas fa-download text-primary"></i>
+                            </a>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <p class="text-muted mt-3 mb-0"><small><i class="fas fa-info-circle"></i> Cliquez sur un document pour le télécharger</small></p>
+                </div>
+            </div>
+            <?php endif; ?>
 
             <!-- Processus -->
             <div class="mb-5">
