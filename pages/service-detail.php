@@ -13,7 +13,7 @@ if (!$service) {
 }
 
 // Récupérer les fichiers PDF du service
-$files_stmt = $pdo->prepare("SELECT * FROM service_files WHERE service_id = ? ORDER BY uploaded_at DESC");
+$files_stmt = $pdo->prepare("SELECT * FROM service_files WHERE service_id = ? ORDER BY id DESC");
 $files_stmt->execute([$id]);
 $service_files = $files_stmt->fetchAll();
 
@@ -53,38 +53,24 @@ $next_service = $current_index < count($all_services) - 1 ? $all_services[$curre
                     <i class="fas fa-check-circle" style="color: #16a34a;"></i> <?php echo __('service_detail.benefits'); ?>
                 </h3>
                 <div class="row g-3">
+                    <?php
+                    $benefits = [
+                        ['title' => $service['benefit1_title'] ?? __('service_detail.expertise'), 'desc' => $service['benefit1_desc'] ?? 'Notre équipe possède une expertise reconnue dans ce domaine avec plusieurs années d\'expérience.', 'icon' => 'lightbulb text-warning'],
+                        ['title' => $service['benefit2_title'] ?? __('service_detail.innovation'), 'desc' => $service['benefit2_desc'] ?? 'Nous utilisons les dernières technologies et méthodologies pour garantir le succès de votre projet.', 'icon' => 'rocket text-info'],
+                        ['title' => $service['benefit3_title'] ?? __('service_detail.support'), 'desc' => $service['benefit3_desc'] ?? 'Un accompagnement complet de votre projet du début jusqu\'à la réussite complète.', 'icon' => 'handshake text-success'],
+                        ['title' => $service['benefit4_title'] ?? __('service_detail.results'), 'desc' => $service['benefit4_desc'] ?? 'Des résultats mesurables et un ROI clair pour votre investissement.', 'icon' => 'chart-line text-primary']
+                    ];
+                    foreach ($benefits as $benefit):
+                    ?>
                     <div class="col-md-6">
                         <div class="card border-0 shadow-sm h-100">
                             <div class="card-body">
-                                <h5 class="card-title"><i class="fas fa-lightbulb text-warning"></i> <?php echo __('service_detail.expertise'); ?></h5>
-                                <p class="card-text">Notre équipe possède une expertise reconnue dans ce domaine avec plusieurs années d'expérience.</p>
+                                <h5 class="card-title"><i class="fas fa-<?php echo $benefit['icon']; ?>"></i> <?php echo htmlspecialchars($benefit['title']); ?></h5>
+                                <p class="card-text"><?php echo htmlspecialchars($benefit['desc']); ?></p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body">
-                                <h5 class="card-title"><i class="fas fa-rocket text-info"></i> <?php echo __('service_detail.innovation'); ?></h5>
-                                <p class="card-text">Nous utilisons les dernières technologies et méthodologies pour garantir le succès de votre projet.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body">
-                                <h5 class="card-title"><i class="fas fa-handshake text-success"></i> <?php echo __('service_detail.support'); ?></h5>
-                                <p class="card-text">Un accompagnement complet de votre projet du début jusqu'à la réussite complète.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body">
-                                <h5 class="card-title"><i class="fas fa-chart-line text-primary"></i> <?php echo __('service_detail.results'); ?></h5>
-                                <p class="card-text">Des résultats mesurables et un ROI clair pour votre investissement.</p>
-                            </div>
-                        </div>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
 
@@ -115,44 +101,67 @@ $next_service = $current_index < count($all_services) - 1 ? $all_services[$curre
             </div>
             <?php endif; ?>
 
+            <!-- Informations de Contact -->
+            <?php if (!empty($service['contact_email']) || !empty($service['contact_phone']) || !empty($service['website'])): ?>
+            <div class="card border-0 shadow-lg mb-5 bg-info text-white">
+                <div class="card-header bg-darker">
+                    <h3 class="mb-0 fw-bold"><i class="fas fa-phone-alt"></i> Nous Contacter pour ce Service</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <?php if (!empty($service['contact_email'])): ?>
+                        <div class="col-md-6">
+                            <a href="mailto:<?php echo htmlspecialchars($service['contact_email']); ?>" class="btn btn-light btn-lg w-100">
+                                <i class="fas fa-envelope"></i> 
+                                <?php echo htmlspecialchars($service['contact_email']); ?>
+                            </a>
+                        </div>
+                        <?php endif; ?>
+                        <?php if (!empty($service['contact_phone'])): ?>
+                        <div class="col-md-6">
+                            <a href="tel:<?php echo htmlspecialchars($service['contact_phone']); ?>" class="btn btn-light btn-lg w-100">
+                                <i class="fas fa-phone"></i> 
+                                <?php echo htmlspecialchars($service['contact_phone']); ?>
+                            </a>
+                        </div>
+                        <?php endif; ?>
+                        <?php if (!empty($service['website'])): ?>
+                        <div class="col-md-12">
+                            <a href="<?php echo htmlspecialchars($service['website']); ?>" target="_blank" class="btn btn-light btn-lg w-100">
+                                <i class="fas fa-globe"></i> 
+                                En savoir plus
+                            </a>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
+
             <!-- Processus -->
             <div class="mb-5">
                 <h3 class="mb-4 fw-bold">
                     <i class="fas fa-cogs"></i> <?php echo __('service_detail.process'); ?>
                 </h3>
                 <div class="row g-3">
+                    <?php
+                    $processes = [
+                        ['num' => 1, 'title' => $service['process1_title'] ?? __('service_detail.step1'), 'desc' => $service['process1_desc'] ?? 'Nous commençons par une analyse approfondie de vos besoins et objectifs.'],
+                        ['num' => 2, 'title' => $service['process2_title'] ?? __('service_detail.step2'), 'desc' => $service['process2_desc'] ?? 'Nous élaborons une stratégie personnalisée adaptée à votre contexte.'],
+                        ['num' => 3, 'title' => $service['process3_title'] ?? __('service_detail.step3'), 'desc' => $service['process3_desc'] ?? 'Mise en œuvre du plan d\'action avec suivi régulier des progrès.'],
+                        ['num' => 4, 'title' => $service['process4_title'] ?? __('service_detail.step4'), 'desc' => $service['process4_desc'] ?? 'Évaluation des résultats et optimisation continue pour votre succès.']
+                    ];
+                    foreach ($processes as $process):
+                    ?>
                     <div class="col-md-6">
                         <div class="card border-start border-primary border-5 shadow-sm h-100">
                             <div class="card-body">
-                                <h5 class="card-title">1. <?php echo __('service_detail.step1'); ?></h5>
-                                <p class="card-text">Nous commençons par une analyse approfondie de vos besoins et objectifs.</p>
+                                <h5 class="card-title"><?php echo $process['num']; ?>. <?php echo htmlspecialchars($process['title']); ?></h5>
+                                <p class="card-text"><?php echo htmlspecialchars($process['desc']); ?></p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="card border-start border-primary border-5 shadow-sm h-100">
-                            <div class="card-body">
-                                <h5 class="card-title">2. <?php echo __('service_detail.step2'); ?></h5>
-                                <p class="card-text">Nous élaborons une stratégie personnalisée adaptée à votre contexte.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card border-start border-primary border-5 shadow-sm h-100">
-                            <div class="card-body">
-                                <h5 class="card-title">3. <?php echo __('service_detail.step3'); ?></h5>
-                                <p class="card-text">Mise en œuvre du plan d'action avec suivi régulier des progrès.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card border-start border-primary border-5 shadow-sm h-100">
-                            <div class="card-body">
-                                <h5 class="card-title">4. <?php echo __('service_detail.step4'); ?></h5>
-                                <p class="card-text">Évaluation des résultats et optimisation continue pour votre succès.</p>
-                            </div>
-                        </div>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
 
@@ -182,10 +191,18 @@ $next_service = $current_index < count($all_services) - 1 ? $all_services[$curre
                 <div class="card-body">
                     <h5 class="card-title mb-3"><i class="fas fa-lightbulb"></i> <?php echo __('service_detail.quick_facts'); ?></h5>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><i class="fas fa-check"></i> <?php echo __('service_detail.fact1'); ?></li>
-                        <li class="mb-2"><i class="fas fa-check"></i> <?php echo __('service_detail.fact2'); ?></li>
-                        <li class="mb-2"><i class="fas fa-check"></i> <?php echo __('service_detail.fact3'); ?></li>
-                        <li><i class="fas fa-check"></i> <?php echo __('service_detail.fact4'); ?></li>
+                        <?php
+                        $facts = [
+                            $service['fact1'] ?? __('service_detail.fact1'),
+                            $service['fact2'] ?? __('service_detail.fact2'),
+                            $service['fact3'] ?? __('service_detail.fact3'),
+                            $service['fact4'] ?? __('service_detail.fact4')
+                        ];
+                        foreach ($facts as $fact):
+                            if (!empty($fact)):
+                        ?>
+                        <li class="mb-2"><i class="fas fa-check"></i> <?php echo htmlspecialchars($fact); ?></li>
+                        <?php endif; endforeach; ?>
                     </ul>
                 </div>
             </div>

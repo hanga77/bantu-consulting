@@ -5,6 +5,65 @@
     </a>
 </div>
 
+<!-- Mode Liste (par défaut) -->
+<?php if (($_GET['action'] ?? '') !== 'add' && ($_GET['action'] ?? '') !== 'edit'): ?>
+<div class="card border-0 shadow-lg mb-4">
+    <div class="card-header bg-primary text-white">
+        <h3 class="mb-0"><i class="fas fa-users"></i> Liste des Membres de l'Équipe</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Nom</th>
+                    <th>Poste</th>
+                    <th>Département/Pôle</th>
+                    <th style="width: 200px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                try {
+                    $teams = $pdo->query("SELECT t.*, d.name as dept_name FROM teams t LEFT JOIN departments d ON t.department_id = d.id ORDER BY t.importance DESC, t.name")->fetchAll();
+                    if (!empty($teams)):
+                        foreach ($teams as $team):
+                ?>
+                <tr>
+                    <td>
+                        <strong><?php echo htmlspecialchars($team['name']); ?></strong>
+                    </td>
+                    <td><?php echo htmlspecialchars($team['position']); ?></td>
+                    <td>
+                        <?php if (!empty($team['department_id'])): ?>
+                            <span class="badge bg-info"><i class="fas fa-folder"></i> <?php echo htmlspecialchars($team['dept_name']); ?></span>
+                        <?php else: ?>
+                            <span class="badge bg-secondary"><i class="fas fa-star"></i> Support & Transversale</span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <a href="?page=admin-dashboard&section=teams&action=edit&id=<?php echo $team['id']; ?>" class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+                        <a href="actions/delete-team.php?id=<?php echo $team['id']; ?>" onclick="return confirm('Êtes-vous sûr?');" class="btn btn-sm btn-danger">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </a>
+                    </td>
+                </tr>
+                <?php 
+                        endforeach;
+                    else:
+                        echo '<tr><td colspan="4" class="text-center text-muted py-4"><i class="fas fa-inbox"></i> Aucun membre ajouté</td></tr>';
+                    endif;
+                } catch (Exception $e) {
+                    echo '<tr><td colspan="4" class="text-center text-danger">Erreur: ' . htmlspecialchars($e->getMessage()) . '</td></tr>';
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+<?php endif; ?>
+
 <?php if (($_GET['action'] ?? '') === 'add'): ?>
 <div class="card border-0 shadow-lg mb-4">
     <div class="card-header bg-gradient text-white">
@@ -69,6 +128,38 @@
             <div class="mb-3">
                 <label for="role" class="form-label fw-bold">Description/Rôle</label>
                 <textarea class="form-control" id="role" name="role" rows="5" placeholder="Décrivez les responsabilités, expériences et fonctions principales..."></textarea>
+            </div>
+
+            <!-- Réseaux Sociaux -->
+            <div class="card border-0 bg-light mb-3">
+                <div class="card-header bg-white">
+                    <h6 class="mb-0"><i class="fas fa-share-alt"></i> Réseaux Sociaux (Optionnel)</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small mb-3">Ajouter les profils des réseaux sociaux du membre pour plus de visibilité</p>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="linkedin" class="form-label"><i class="fab fa-linkedin text-info"></i> LinkedIn</label>
+                            <input type="url" class="form-control" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/...">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="twitter" class="form-label"><i class="fab fa-twitter text-info"></i> Twitter</label>
+                            <input type="url" class="form-control" id="twitter" name="twitter" placeholder="https://twitter.com/...">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="facebook" class="form-label"><i class="fab fa-facebook text-primary"></i> Facebook</label>
+                            <input type="url" class="form-control" id="facebook" name="facebook" placeholder="https://facebook.com/...">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="instagram" class="form-label"><i class="fab fa-instagram text-danger"></i> Instagram</label>
+                            <input type="url" class="form-control" id="instagram" name="instagram" placeholder="https://instagram.com/...">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="website" class="form-label"><i class="fas fa-globe text-success"></i> Site Web</label>
+                            <input type="url" class="form-control" id="website" name="website" placeholder="https://monsite.com">
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="alert alert-info">
@@ -165,6 +256,38 @@
                 <textarea class="form-control" id="role" name="role" rows="5"><?php echo htmlspecialchars($team['role'] ?? ''); ?></textarea>
             </div>
 
+            <!-- Réseaux Sociaux -->
+            <div class="card border-0 bg-light mb-3">
+                <div class="card-header bg-white">
+                    <h6 class="mb-0"><i class="fas fa-share-alt"></i> Réseaux Sociaux (Optionnel)</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small mb-3">Ajouter les profils des réseaux sociaux du membre pour plus de visibilité</p>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="linkedin" class="form-label"><i class="fab fa-linkedin text-info"></i> LinkedIn</label>
+                            <input type="url" class="form-control" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/..." value="<?php echo htmlspecialchars($team['linkedin'] ?? ''); ?>">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="twitter" class="form-label"><i class="fab fa-twitter text-info"></i> Twitter</label>
+                            <input type="url" class="form-control" id="twitter" name="twitter" placeholder="https://twitter.com/..." value="<?php echo htmlspecialchars($team['twitter'] ?? ''); ?>">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="facebook" class="form-label"><i class="fab fa-facebook text-primary"></i> Facebook</label>
+                            <input type="url" class="form-control" id="facebook" name="facebook" placeholder="https://facebook.com/..." value="<?php echo htmlspecialchars($team['facebook'] ?? ''); ?>">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="instagram" class="form-label"><i class="fab fa-instagram text-danger"></i> Instagram</label>
+                            <input type="url" class="form-control" id="instagram" name="instagram" placeholder="https://instagram.com/..." value="<?php echo htmlspecialchars($team['instagram'] ?? ''); ?>">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="website" class="form-label"><i class="fas fa-globe text-success"></i> Site Web</label>
+                            <input type="url" class="form-control" id="website" name="website" placeholder="https://monsite.com" value="<?php echo htmlspecialchars($team['website'] ?? ''); ?>">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-success btn-lg">
                     <i class="fas fa-save"></i> Mettre à jour
@@ -178,33 +301,3 @@
     </div>
 </div>
 <?php endif; ?>
-    <thead class="table-dark">
-        <tr>
-            <th>Nom</th>
-            <th>Poste</th>
-            <th>Département</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php
-        $teams = $pdo->query("SELECT t.*, d.name as dept_name FROM teams t LEFT JOIN departments d ON t.department_id = d.id ORDER BY t.name")->fetchAll();
-        if (!empty($teams)):
-            foreach ($teams as $team):
-        ?>
-        <tr>
-            <td><?php echo htmlspecialchars($team['name']); ?></td>
-            <td><?php echo htmlspecialchars($team['position']); ?></td>
-            <td><?php echo htmlspecialchars($team['dept_name'] ?? 'N/A'); ?></td>
-            <td>
-                <a href="?page=admin-dashboard&section=teams&action=edit&id=<?php echo $team['id']; ?>" class="btn btn-sm btn-warning">
-                    <i class="fas fa-edit"></i> Modifier
-                </a>
-                <a href="actions/delete-team.php?id=<?php echo $team['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Confirmer la suppression ?')">Supprimer</a>
-            </td>
-        </tr>
-        <?php endforeach; else: ?>
-        <tr><td colspan="4" class="text-center text-muted">Aucun membre</td></tr>
-        <?php endif; ?>
-    </tbody>
-</table>

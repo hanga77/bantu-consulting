@@ -12,6 +12,11 @@ $position = $_POST['position'] ?? '';
 $role = $_POST['role'] ?? '';
 $importance = $_POST['importance'] ?? '';
 $department_id = !empty($_POST['department_id']) ? intval($_POST['department_id']) : null;
+$linkedin = $_POST['linkedin'] ?? '';
+$twitter = $_POST['twitter'] ?? '';
+$facebook = $_POST['facebook'] ?? '';
+$instagram = $_POST['instagram'] ?? '';
+$website = $_POST['website'] ?? '';
 
 if (empty($name) || empty($position)) {
     $_SESSION['error'] = 'Remplissez tous les champs obligatoires';
@@ -92,8 +97,8 @@ try {
             $image_file = $team['image'];
         }
         
-        $stmt = $pdo->prepare("UPDATE teams SET name = ?, position = ?, role = ?, importance = ?, image = ?, department_id = ? WHERE id = ?");
-        $stmt->execute([$name, $position, $role, $importance, $image_file, $department_id, $id]);
+        $stmt = $pdo->prepare("UPDATE teams SET name = ?, position = ?, role = ?, importance = ?, image = ?, department_id = ?, linkedin = ?, twitter = ?, facebook = ?, instagram = ?, website = ? WHERE id = ?");
+        $stmt->execute([$name, $position, $role, $importance, $image_file, $department_id, $linkedin, $twitter, $facebook, $instagram, $website, $id]);
         $_SESSION['success'] = 'Membre mis à jour avec succès !';
     } else {
         // Création
@@ -103,8 +108,8 @@ try {
             exit;
         }
         
-        $stmt = $pdo->prepare("INSERT INTO teams (name, position, role, importance, image, department_id) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$name, $position, $role, $importance, $image_file, $department_id]);
+        $stmt = $pdo->prepare("INSERT INTO teams (name, position, role, importance, image, department_id, linkedin, twitter, facebook, instagram, website) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$name, $position, $role, $importance, $image_file, $department_id, $linkedin, $twitter, $facebook, $instagram, $website]);
         $_SESSION['success'] = 'Membre ajouté avec succès !';
     }
 } catch (PDOException $e) {

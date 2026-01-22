@@ -16,6 +16,29 @@ CREATE TABLE services (
     title VARCHAR(100),
     description TEXT,
     icon VARCHAR(50),
+    website VARCHAR(255),
+    contact_email VARCHAR(100),
+    contact_phone VARCHAR(20),
+    benefit1_title VARCHAR(100),
+    benefit1_desc TEXT,
+    benefit2_title VARCHAR(100),
+    benefit2_desc TEXT,
+    benefit3_title VARCHAR(100),
+    benefit3_desc TEXT,
+    benefit4_title VARCHAR(100),
+    benefit4_desc TEXT,
+    process1_title VARCHAR(100),
+    process1_desc TEXT,
+    process2_title VARCHAR(100),
+    process2_desc TEXT,
+    process3_title VARCHAR(100),
+    process3_desc TEXT,
+    process4_title VARCHAR(100),
+    process4_desc TEXT,
+    fact1 VARCHAR(255),
+    fact2 VARCHAR(255),
+    fact3 VARCHAR(255),
+    fact4 VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -25,6 +48,8 @@ CREATE TABLE service_files (
     service_id INT,
     file_name VARCHAR(255),
     file_path VARCHAR(255),
+    file_type VARCHAR(50),
+    file_url VARCHAR(500),
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE
 );
@@ -69,6 +94,11 @@ CREATE TABLE teams (
     importance VARCHAR(255),
     image VARCHAR(255),
     department_id INT,
+    linkedin VARCHAR(255),
+    twitter VARCHAR(255),
+    facebook VARCHAR(255),
+    instagram VARCHAR(255),
+    website VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE SET NULL
 );

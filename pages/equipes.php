@@ -126,6 +126,37 @@ $departments = $pdo->query("SELECT * FROM departments ORDER BY FIELD(name, 'Pôl
                                     <strong class="d-block text-primary"><?php echo htmlspecialchars($member['position']); ?></strong>
                                 </p>
                                 <span class="badge bg-info"><i class="fas fa-star"></i> <?php echo htmlspecialchars($member['importance']); ?></span>
+                                
+                                <!-- Réseaux Sociaux -->
+                                <?php if (!empty($member['linkedin']) || !empty($member['twitter']) || !empty($member['facebook']) || !empty($member['instagram']) || !empty($member['website'])): ?>
+                                <div class="mt-3 pt-3 border-top">
+                                    <?php if (!empty($member['linkedin'])): ?>
+                                    <a href="<?php echo htmlspecialchars($member['linkedin']); ?>" target="_blank" class="btn btn-sm btn-outline-info me-2" title="LinkedIn">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <?php endif; ?>
+                                    <?php if (!empty($member['twitter'])): ?>
+                                    <a href="<?php echo htmlspecialchars($member['twitter']); ?>" target="_blank" class="btn btn-sm btn-outline-info me-2" title="Twitter">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    <?php endif; ?>
+                                    <?php if (!empty($member['facebook'])): ?>
+                                    <a href="<?php echo htmlspecialchars($member['facebook']); ?>" target="_blank" class="btn btn-sm btn-outline-primary me-2" title="Facebook">
+                                        <i class="fab fa-facebook"></i>
+                                    </a>
+                                    <?php endif; ?>
+                                    <?php if (!empty($member['instagram'])): ?>
+                                    <a href="<?php echo htmlspecialchars($member['instagram']); ?>" target="_blank" class="btn btn-sm btn-outline-danger me-2" title="Instagram">
+                                        <i class="fab fa-instagram"></i>
+                                    </a>
+                                    <?php endif; ?>
+                                    <?php if (!empty($member['website'])): ?>
+                                    <a href="<?php echo htmlspecialchars($member['website']); ?>" target="_blank" class="btn btn-sm btn-outline-success me-2" title="Site Web">
+                                        <i class="fas fa-globe"></i>
+                                    </a>
+                                    <?php endif; ?>
+                                </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
