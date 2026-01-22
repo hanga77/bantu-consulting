@@ -46,43 +46,64 @@ if (empty($title) || empty($description)) {
 }
 
 try {
-    // Créer ou mettre à jour le service
     if (isset($_POST['id']) && !empty($_POST['id'])) {
         // Mise à jour
         $id = intval($_POST['id']);
         $stmt = $pdo->prepare("UPDATE services SET 
-            title = ?, 
-            description = ?, 
-            contact_email = ?, 
-            contact_phone = ?, 
-            website = ?,
-            benefit1_title = ?,
-            benefit1_desc = ?,
-            benefit2_title = ?,
-            benefit2_desc = ?,
-            benefit3_title = ?,
-            benefit3_desc = ?,
-            benefit4_title = ?,
-            benefit4_desc = ?,
-            process1_title = ?,
-            process1_desc = ?,
-            process2_title = ?,
-            process2_desc = ?,
-            process3_title = ?,
-            process3_desc = ?,
-            process4_title = ?,
-            process4_desc = ?,
-            fact1 = ?,
-            fact2 = ?,
-            fact3 = ?,
-            fact4 = ?
-            WHERE id = ?");
-        $stmt->execute([$title, $description, $contact_email, $contact_phone, $website,
-            $benefit1_title, $benefit1_desc, $benefit2_title, $benefit2_desc,
-            $benefit3_title, $benefit3_desc, $benefit4_title, $benefit4_desc,
-            $process1_title, $process1_desc, $process2_title, $process2_desc,
-            $process3_title, $process3_desc, $process4_title, $process4_desc,
-            $fact1, $fact2, $fact3, $fact4, $id]);
+            title = :title, 
+            description = :description, 
+            contact_email = :contact_email, 
+            contact_phone = :contact_phone, 
+            website = :website,
+            benefit1_title = :benefit1_title,
+            benefit1_desc = :benefit1_desc,
+            benefit2_title = :benefit2_title,
+            benefit2_desc = :benefit2_desc,
+            benefit3_title = :benefit3_title,
+            benefit3_desc = :benefit3_desc,
+            benefit4_title = :benefit4_title,
+            benefit4_desc = :benefit4_desc,
+            process1_title = :process1_title,
+            process1_desc = :process1_desc,
+            process2_title = :process2_title,
+            process2_desc = :process2_desc,
+            process3_title = :process3_title,
+            process3_desc = :process3_desc,
+            process4_title = :process4_title,
+            process4_desc = :process4_desc,
+            fact1 = :fact1,
+            fact2 = :fact2,
+            fact3 = :fact3,
+            fact4 = :fact4
+            WHERE id = :id");
+        $stmt->execute([
+            ':title' => $title,
+            ':description' => $description,
+            ':contact_email' => $contact_email,
+            ':contact_phone' => $contact_phone,
+            ':website' => $website,
+            ':benefit1_title' => $benefit1_title,
+            ':benefit1_desc' => $benefit1_desc,
+            ':benefit2_title' => $benefit2_title,
+            ':benefit2_desc' => $benefit2_desc,
+            ':benefit3_title' => $benefit3_title,
+            ':benefit3_desc' => $benefit3_desc,
+            ':benefit4_title' => $benefit4_title,
+            ':benefit4_desc' => $benefit4_desc,
+            ':process1_title' => $process1_title,
+            ':process1_desc' => $process1_desc,
+            ':process2_title' => $process2_title,
+            ':process2_desc' => $process2_desc,
+            ':process3_title' => $process3_title,
+            ':process3_desc' => $process3_desc,
+            ':process4_title' => $process4_title,
+            ':process4_desc' => $process4_desc,
+            ':fact1' => $fact1,
+            ':fact2' => $fact2,
+            ':fact3' => $fact3,
+            ':fact4' => $fact4,
+            ':id' => $id
+        ]);
         $service_id = $id;
     } else {
         // Création
@@ -93,13 +114,41 @@ try {
             process1_title, process1_desc, process2_title, process2_desc,
             process3_title, process3_desc, process4_title, process4_desc,
             fact1, fact2, fact3, fact4
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$title, $description, $contact_email, $contact_phone, $website,
-            $benefit1_title, $benefit1_desc, $benefit2_title, $benefit2_desc,
-            $benefit3_title, $benefit3_desc, $benefit4_title, $benefit4_desc,
-            $process1_title, $process1_desc, $process2_title, $process2_desc,
-            $process3_title, $process3_desc, $process4_title, $process4_desc,
-            $fact1, $fact2, $fact3, $fact4]);
+        ) VALUES (
+            :title, :description, :contact_email, :contact_phone, :website,
+            :benefit1_title, :benefit1_desc, :benefit2_title, :benefit2_desc,
+            :benefit3_title, :benefit3_desc, :benefit4_title, :benefit4_desc,
+            :process1_title, :process1_desc, :process2_title, :process2_desc,
+            :process3_title, :process3_desc, :process4_title, :process4_desc,
+            :fact1, :fact2, :fact3, :fact4
+        )");
+        $stmt->execute([
+            ':title' => $title,
+            ':description' => $description,
+            ':contact_email' => $contact_email,
+            ':contact_phone' => $contact_phone,
+            ':website' => $website,
+            ':benefit1_title' => $benefit1_title,
+            ':benefit1_desc' => $benefit1_desc,
+            ':benefit2_title' => $benefit2_title,
+            ':benefit2_desc' => $benefit2_desc,
+            ':benefit3_title' => $benefit3_title,
+            ':benefit3_desc' => $benefit3_desc,
+            ':benefit4_title' => $benefit4_title,
+            ':benefit4_desc' => $benefit4_desc,
+            ':process1_title' => $process1_title,
+            ':process1_desc' => $process1_desc,
+            ':process2_title' => $process2_title,
+            ':process2_desc' => $process2_desc,
+            ':process3_title' => $process3_title,
+            ':process3_desc' => $process3_desc,
+            ':process4_title' => $process4_title,
+            ':process4_desc' => $process4_desc,
+            ':fact1' => $fact1,
+            ':fact2' => $fact2,
+            ':fact3' => $fact3,
+            ':fact4' => $fact4
+        ]);
         $service_id = $pdo->lastInsertId();
     }
 
@@ -149,7 +198,7 @@ try {
 
     $_SESSION['success'] = 'Service sauvegardé avec succès !';
 } catch (PDOException $e) {
-    $_SESSION['error'] = 'Erreur lors de la sauvegarde: ' . $e->getMessage();
+    $_SESSION['error'] = 'Erreur: ' . $e->getMessage();
 }
 
 header('Location: ../?page=admin-dashboard&section=services');

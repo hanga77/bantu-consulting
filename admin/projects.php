@@ -1,198 +1,106 @@
-<div class="d-flex align-items-center justify-content-between mb-4">
-    <h2><i class="fas fa-briefcase"></i> Gestion des Projets</h2>
-    <a href="?page=admin-dashboard&section=projects&action=add" class="btn btn-primary">
-        <i class="fas fa-plus-circle"></i> Ajouter un Projet
-    </a>
-</div>
+<?php
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ?page=admin-login');
+    exit;
+}
 
-<?php if (($_GET['action'] ?? '') === 'add'): ?>
-<div class="card border-0 shadow-lg mb-4">
-    <div class="card-header bg-gradient text-white">
-        <h5 class="mb-0"><i class="fas fa-folder-plus"></i> Ajouter un Nouveau Projet</h5>
-    </div>
-    <div class="card-body">
-        <form method="POST" action="actions/save-project.php" enctype="multipart/form-data">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="title" class="form-label fw-bold">Titre du projet *</label>
-                        <input type="text" class="form-control form-control-lg" id="title" name="title" required placeholder="Ex: Transformation Digitale Banque">
+require_once 'config/database.php';
+
+$project = null;
+$is_edit = false;
+
+// Charger le projet si en édition
+if (isset($_GET['edit'])) {
+    $project = $pdo->prepare("SELECT * FROM projects WHERE id = ?");
+    $project->execute([intval($_GET['edit'])]);
+    $project = $project->fetch();
+    $is_edit = !empty($project);
+}
+
+$projects = $pdo->query("SELECT id, title, created_at FROM projects ORDER BY created_at DESC")->fetchAll();
+?>
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h2><?php echo $is_edit ? 'Modifier le projet' : 'Ajouter un projet'; ?></h2>
+            
+            <form action="actions/save-project.php" method="POST" enctype="multipart/form-data" class="card p-4">
+                <?php if ($is_edit): ?>
+                <input type="hidden" name="id" value="<?php echo $project['id']; ?>">
+                <?php endif; ?>
+                
+                <div class="mb-3">
+                    <label class="form-label">Titre *</label>
+                    <input type="text" name="title" class="form-control" value="<?php echo htmlspecialchars($project['title'] ?? ''); ?>" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Description courte</label>
+                    <input type="text" name="short_description" class="form-control" value="<?php echo htmlspecialchars($project['short_description'] ?? ''); ?>">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Description complète *</label>
+                    <textarea name="description" class="form-control" rows="5" required><?php echo htmlspecialchars($project['description'] ?? ''); ?></textarea>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Client</label>
+                        <input type="text" name="client" class="form-control" value="<?php echo htmlspecialchars($project['client'] ?? ''); ?>">
                     </div>
-                    <div class="mb-3">
-                        <label for="short_description" class="form-label fw-bold">Description courte</label>
-                        <textarea class="form-control" id="short_description" name="short_description" rows="2" placeholder="Max 255 caractères"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="status" class="form-label fw-bold">Statut</label>
-                        <select class="form-control form-control-lg" id="status" name="status">
-                            <option value="">-- Sélectionner --</option>
-                            <option value="Terminé">Terminé</option>
-                            <option value="En cours">En cours</option>
-                            <option value="Planifié">Planifié</option>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Statut</label>
+                        <select name="status" class="form-control">
+                            <option value="en cours" <?php echo ($project['status'] ?? '') === 'en cours' ? 'selected' : ''; ?>>En cours</option>
+                            <option value="terminé" <?php echo ($project['status'] ?? '') === 'terminé' ? 'selected' : ''; ?>>Terminé</option>
+                            <option value="en attente" <?php echo ($project['status'] ?? '') === 'en attente' ? 'selected' : ''; ?>>En attente</option>
                         </select>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="start_date" class="form-label fw-bold">Date de début</label>
-                        <input type="date" class="form-control form-control-lg" id="start_date" name="start_date">
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Date de début</label>
+                        <input type="date" name="start_date" class="form-control" value="<?php echo htmlspecialchars($project['start_date'] ?? ''); ?>">
                     </div>
-                    <div class="mb-3">
-                        <label for="end_date" class="form-label fw-bold">Date de fin</label>
-                        <input type="date" class="form-control form-control-lg" id="end_date" name="end_date">
-                    </div>
-                    <div class="mb-3">
-                        <label for="image" class="form-label fw-bold">Image principale *</label>
-                        <input type="file" class="form-control form-control-lg" id="image" name="image" accept="image/*" required>
-                        <small class="text-muted">Format: JPG, PNG | Max 2MB</small>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Date de fin</label>
+                        <input type="date" name="end_date" class="form-control" value="<?php echo htmlspecialchars($project['end_date'] ?? ''); ?>">
                     </div>
                 </div>
-            </div>
-
-            <div class="mb-3">
-                <label for="description" class="form-label fw-bold">Description complète *</label>
-                <textarea class="form-control" id="description" name="description" rows="5" required placeholder="Décrivez le projet en détail..."></textarea>
-            </div>
-
-            <div class="alert alert-info">
-                <i class="fas fa-lightbulb"></i> 
-                <strong>Conseil :</strong> Vous pouvez ajouter d'autres images à la galerie du projet après sa création.
-            </div>
-
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-success btn-lg">
-                    <i class="fas fa-save"></i> Créer le projet
-                </button>
-                <a href="?page=admin-dashboard&section=projects" class="btn btn-secondary btn-lg">
-                    Annuler
+                
+                <div class="mb-3">
+                    <label class="form-label">Budget</label>
+                    <input type="number" step="0.01" name="budget" class="form-control" value="<?php echo htmlspecialchars($project['budget'] ?? ''); ?>">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Image</label>
+                    <input type="file" name="image" class="form-control" accept="image/*">
+                    <?php if ($is_edit && $project['image']): ?>
+                    <small class="text-muted">Image actuelle: <?php echo htmlspecialchars($project['image']); ?></small>
+                    <?php endif; ?>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    <a href="?page=admin-dashboard&section=projects" class="btn btn-secondary">Annuler</a>
+                </div>
+            </form>
+        </div>
+        
+        <div class="col-md-4">
+            <h3>Projets existants</h3>
+            <div class="list-group">
+                <?php foreach ($projects as $p): ?>
+                <a href="?page=admin-projects&edit=<?php echo $p['id']; ?>" class="list-group-item list-group-item-action">
+                    <strong><?php echo htmlspecialchars($p['title']); ?></strong>
+                    <br><small class="text-muted"><?php echo date('d/m/Y', strtotime($p['created_at'])); ?></small>
                 </a>
-            </div>
-        </form>
-    </div>
-</div>
-<?php endif; ?>
-
-<!-- Affichage des projets existants -->
-<div class="table-responsive">
-    <table class="table table-striped table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th>Titre</th>
-                <th>Statut</th>
-                <th>Date début</th>
-                <th>Images</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            $projects = $pdo->query("SELECT * FROM projects ORDER BY created_at DESC")->fetchAll();
-            if (!empty($projects)):
-                foreach ($projects as $project):
-                    $img_count = $pdo->prepare("SELECT COUNT(*) as count FROM project_images WHERE project_id = ?")->execute([$project['id']]);
-                    $img_result = $pdo->prepare("SELECT COUNT(*) as count FROM project_images WHERE project_id = ?");
-                    $img_result->execute([$project['id']]);
-                    $img_data = $img_result->fetch();
-            ?>
-            <tr>
-                <td><strong><?php echo htmlspecialchars($project['title']); ?></strong></td>
-                <td><span class="badge bg-success"><?php echo htmlspecialchars($project['status']); ?></span></td>
-                <td><?php echo $project['start_date'] ? date('d/m/Y', strtotime($project['start_date'])) : '-'; ?></td>
-                <td>
-                    <a href="?page=admin-dashboard&section=projects&action=gallery&id=<?php echo $project['id']; ?>" class="btn btn-sm btn-info">
-                        <i class="fas fa-images"></i> <?php echo $img_data['count']; ?> image(s)
-                    </a>
-                </td>
-                <td>
-                    <a href="?page=admin-dashboard&section=projects&action=gallery&id=<?php echo $project['id']; ?>" class="btn btn-sm btn-primary">
-                        <i class="fas fa-edit"></i> Galerie
-                    </a>
-                    <a href="actions/delete-project.php?id=<?php echo $project['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Confirmer la suppression ?')">
-                        <i class="fas fa-trash"></i> Supprimer
-                    </a>
-                </td>
-            </tr>
-            <?php endforeach; else: ?>
-            <tr><td colspan="5" class="text-center text-muted">Aucun projet</td></tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
-</div>
-
-<!-- Galerie des images du projet -->
-<?php if (($_GET['action'] ?? '') === 'gallery' && isset($_GET['id'])): ?>
-<?php 
-$project_id = $_GET['id'];
-$project = $pdo->prepare("SELECT * FROM projects WHERE id = ?");
-$project->execute([$project_id]);
-$proj = $project->fetch();
-
-if ($proj):
-    $images = $pdo->prepare("SELECT * FROM project_images WHERE project_id = ? ORDER BY order_pos");
-    $images->execute([$project_id]);
-    $imgs = $images->fetchAll();
-?>
-
-<div class="card border-0 shadow-lg mt-4">
-    <div class="card-header bg-gradient text-white">
-        <h5 class="mb-0"><i class="fas fa-images"></i> Galerie : <?php echo htmlspecialchars($proj['title']); ?></h5>
-    </div>
-    <div class="card-body">
-        <!-- Ajouter une image -->
-        <form method="POST" action="actions/save-project-image.php" enctype="multipart/form-data" class="mb-4 p-3 bg-light rounded">
-            <input type="hidden" name="project_id" value="<?php echo $project_id; ?>">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="image_file" class="form-label fw-bold">Ajouter une image</label>
-                        <input type="file" class="form-control" id="image_file" name="image" accept="image/*" required>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="image_title" class="form-label fw-bold">Titre de l'image</label>
-                        <input type="text" class="form-control" id="image_title" name="title" placeholder="Titre optionnel">
-                    </div>
-                </div>
-            </div>
-            <div class="mb-3">
-                <label for="image_desc" class="form-label fw-bold">Description</label>
-                <textarea class="form-control" id="image_desc" name="description" rows="2" placeholder="Description optionnelle"></textarea>
-            </div>
-            <button type="submit" class="btn btn-success">
-                <i class="fas fa-plus"></i> Ajouter l'image
-            </button>
-        </form>
-
-        <!-- Liste des images -->
-        <div class="row mt-4">
-            <?php if (!empty($imgs)): ?>
-                <?php foreach ($imgs as $img): ?>
-                <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <img src="uploads/<?php echo htmlspecialchars($img['image']); ?>" class="card-img-top" alt="" style="height: 200px; object-fit: cover;">
-                        <div class="card-body">
-                            <h6 class="card-title"><?php echo htmlspecialchars($img['title'] ?? 'Sans titre'); ?></h6>
-                            <p class="card-text small text-muted"><?php echo htmlspecialchars(substr($img['description'] ?? '', 0, 50)); ?></p>
-                            <a href="actions/delete-project-image.php?id=<?php echo $img['id']; ?>&project_id=<?php echo $project_id; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer ?')">
-                                <i class="fas fa-trash"></i> Supprimer
-                            </a>
-                        </div>
-                    </div>
-                </div>
                 <?php endforeach; ?>
-            <?php else: ?>
-            <div class="col-md-12">
-                <p class="text-muted text-center">Aucune image dans la galerie</p>
             </div>
-            <?php endif; ?>
         </div>
     </div>
 </div>
-
-<a href="?page=admin-dashboard&section=projects" class="btn btn-secondary mt-3">
-    Retour aux projets
-</a>
-
-<?php endif; ?>
-<?php endif; // fin if action=gallery ?>
