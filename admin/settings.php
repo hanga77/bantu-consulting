@@ -144,6 +144,28 @@ $settings = getSiteSettings();
                             <input type="text" class="form-control" id="address" name="address" value="<?php echo htmlspecialchars($settings['address'] ?? ''); ?>">
                         </div>
                     </div>
+                    <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold"><i class="fab fa-facebook"></i> Facebook</label>
+                        <input type="text" class="form-control" name="facebook_url" value="<?php echo htmlspecialchars($settings['facebook_url'] ?? ''); ?>">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold"><i class="fab fa-twitter"></i> Twitter</label>
+                        <input type="text" class="form-control" name="twitter_url" value="<?php echo htmlspecialchars($settings['twitter_url'] ?? ''); ?>">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold"><i class="fab fa-linkedin"></i> LinkedIn</label>
+                        <input type="text" class="form-control" name="linkedin_url" value="<?php echo htmlspecialchars($settings['linkedin_url'] ?? ''); ?>">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold"><i class="fab fa-instagram"></i> Instagram</label>
+                        <input type="text" class="form-control" name="instagram_url" value="<?php echo htmlspecialchars($settings['instagram_url'] ?? ''); ?>">
+                    </div>
+                </div>
+
                 </div>
 
                 <!-- TAB 3: VIDÉO -->

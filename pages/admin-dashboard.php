@@ -73,6 +73,19 @@ $section = preg_replace('/[^a-z0-9_-]/', '', $section);
                 </div>
             </a>
         </div>
+        
+         <!-- experts -->
+        <div class="col-md-3">
+            <a href="?page=admin-dashboard&section=experts" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm card-hover">
+                    <div class="card-body text-center">
+                        <i class="fas fa-user-tie fa-3x text-dark mb-3"></i>
+                        <h5 class="card-title">Experts</h5>
+                        <p class="card-text text-muted">Gérer les experts</p>
+                    </div>
+                </div>
+            </a>
+        </div>
 
         <!-- Départements -->
         <div class="col-md-3">
@@ -163,6 +176,9 @@ $section = preg_replace('/[^a-z0-9_-]/', '', $section);
                 <a href="?page=admin-dashboard&section=projects" class="list-group-item list-group-item-action <?php echo $section === 'projects' ? 'active' : ''; ?>">
                     <i class="fas fa-briefcase"></i> Projets
                 </a>
+                <a href="?page=admin-dashboard&section=experts" class="list-group-item ...">
+                    <i class="fas fa-user-tie"></i> Experts
+                </a>
                 <a href="?page=admin-dashboard&section=teams" class="list-group-item list-group-item-action <?php echo $section === 'teams' ? 'active' : ''; ?>">
                     <i class="fas fa-users"></i> Équipes
                 </a>
@@ -183,6 +199,9 @@ $section = preg_replace('/[^a-z0-9_-]/', '', $section);
                 </a>
                 <a href="?page=admin-dashboard&section=settings" class="list-group-item list-group-item-action <?php echo $section === 'settings' ? 'active' : ''; ?>">
                     <i class="fas fa-sliders-h"></i> Paramètres
+                </a>
+                <a href="?page=admin-dashboard&section=users" class="list-group-item list-group-item-action <?php echo $section === 'users' ? 'active' : ''; ?>">
+                    <i class="fas fa-user"></i> Utilisateurs
                 </a>
                 <a href="actions/logout.php" class="list-group-item list-group-item-action text-danger">
                     <i class="fas fa-sign-out-alt"></i> Déconnexion

@@ -73,6 +73,22 @@ $translations = [
         'services.learn_more' => 'En savoir plus',
         'services.need' => 'Besoin d\'un service spécifique ?',
         'services.contact_us' => 'Contactez-nous pour discuter de vos besoins',
+        'service_detail.benefits' => 'Avantages du service',
+        'service_detail.process' => 'Notre processus',
+        'service_detail.step1' => 'Analyse des besoins',
+        'service_detail.step2' => 'Définition de la stratégie',
+        'service_detail.step3' => 'Mise en œuvre',
+        'service_detail.step4' => 'Suivi et optimisation',
+        'service_detail.quick_facts' => 'Informations clés',
+        'service_detail.other_services' => 'Autres services',
+        'service_detail.interested' => 'Intéressé par ce service ?',
+        'service_detail.contact_text' => 'Contactez-nous pour en savoir plus',
+        'service_detail.expertise' => 'Expertise reconnue',
+        'service_detail.innovation' => 'Innovation continue',
+        'service_detail.support' => 'Accompagnement complet',
+        'service_detail.results' => 'Résultats mesurables',
+        'services.back' => 'Retour aux services',
+        'services.not_found' => 'Service introuvable',
         
         // À Propos
         'about.title' => 'À Propos de Bantu Consulting',
@@ -164,6 +180,22 @@ $translations = [
         'services.learn_more' => 'Learn more',
         'services.need' => 'Need a specific service?',
         'services.contact_us' => 'Contact us to discuss your needs',
+        'service_detail.benefits' => 'Service benefits',
+        'service_detail.process' => 'Our process',
+        'service_detail.step1' => 'Needs analysis',
+        'service_detail.step2' => 'Strategy definition',
+        'service_detail.step3' => 'Implementation',
+        'service_detail.step4' => 'Monitoring and optimization',
+        'service_detail.quick_facts' => 'Key information',
+        'service_detail.other_services' => 'Other services',
+        'service_detail.interested' => 'Interested in this service?',
+        'service_detail.contact_text' => 'Contact us to learn more',
+        'service_detail.expertise' => 'Recognized expertise',
+        'service_detail.innovation' => 'Continuous innovation',
+        'service_detail.support' => 'Full support',
+        'service_detail.results' => 'Measurable results',
+        'services.back' => 'Back to services',
+        'services.not_found' => 'Service not found',
         
         // About
         'about.title' => 'About Bantu Consulting',
@@ -192,6 +224,7 @@ $translations = [
         'footer.email' => 'Email',
         'footer.phone' => 'Phone',
         'footer.address' => 'Address',
+        
     ]
 ];
 

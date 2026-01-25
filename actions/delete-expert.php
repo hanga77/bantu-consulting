@@ -8,20 +8,20 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 if (!isset($_GET['id'])) {
-    $_SESSION['error'] = 'ID service manquant';
-    header('Location: ../?page=admin-dashboard&section=services');
+    $_SESSION['error'] = 'ID expert manquant';
+    header('Location: ../?page=admin-dashboard&section=experts');
     exit;
 }
 
 try {
     $id = intval($_GET['id']);
-    $stmt = $pdo->prepare("DELETE FROM services WHERE id = ?");
+    $stmt = $pdo->prepare("DELETE FROM experts WHERE id = ?");
     $stmt->execute([$id]);
-    $_SESSION['success'] = 'Service supprimé avec succès !';
+    $_SESSION['success'] = 'Expert supprimé avec succès !';
 } catch (PDOException $e) {
     $_SESSION['error'] = 'Erreur: ' . $e->getMessage();
 }
 
-header('Location: ../?page=admin-dashboard&section=services');
+header('Location: ../?page=admin-dashboard&section=experts');
 exit;
 ?>

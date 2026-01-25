@@ -8,10 +8,11 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 try {
-    $pdo->exec("UPDATE site_settings SET site_logo = NULL WHERE id = 1");
-    $_SESSION['success'] = 'Logo supprimé';
+    $stmt = $pdo->prepare("DELETE FROM settings WHERE setting_key = ?");
+    $stmt->execute(['site_logo']);
+    $_SESSION['success'] = 'Logo supprimé !';
 } catch (PDOException $e) {
-    $_SESSION['error'] = 'Erreur lors de la suppression';
+    $_SESSION['error'] = 'Erreur: ' . $e->getMessage();
 }
 
 header('Location: ../?page=admin-dashboard&section=settings');

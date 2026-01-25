@@ -34,14 +34,14 @@ echo "<hr>";
 echo "<h3>3. Création des données par défaut...</h3>";
 
 try {
-    // Admin
+    // Admin principal
     $stmt = $pdo->query("SELECT COUNT(*) as count FROM users");
     $result = $stmt->fetch();
     
     if ($result['count'] == 0) {
         $password = password_hash('admin123', PASSWORD_BCRYPT);
-        $insert = $pdo->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
-        $insert->execute(['admin', $password, 'admin@bantu-consulting.com']);
+        $insert = $pdo->prepare("INSERT INTO users (username, password, email, full_name, role) VALUES (?, ?, ?, ?, ?)");
+        $insert->execute(['admin', $password, 'admin@bantu-consulting.com', 'Administrateur', 'admin']);
         echo "✅ Admin créé (admin / admin123)<br>";
     } else {
         echo "✓ Admin existe déjà<br>";
@@ -106,6 +106,26 @@ try {
         echo "✓ Départements existent déjà<br>";
     }
     
+    // Consultants externes (Bibliothèque)
+    $stmt = $pdo->query("SELECT COUNT(*) as count FROM consultants");
+    $result = $stmt->fetch();
+    
+    if ($result['count'] == 0) {
+        $consultants = [
+            ['Jean Dupont', 'jean@example.com', '+237 XXX XXX XXX', 'Finance', 'Audit financier, Contrôle de gestion', null, null, 'https://linkedin.com/in/jean', 1, '150.00', 'Expert en finance avec 10 ans d\'expérience'],
+            ['Marie Martin', 'marie@example.com', '+237 XXX XXX XXX', 'RH', 'Gestion des talents, Recrutement', null, null, 'https://linkedin.com/in/marie', 1, '120.00', 'Spécialiste RH avec expertise en transformation'],
+            ['Pierre Bernard', 'pierre@example.com', '+237 XXX XXX XXX', 'IT', 'Transformation digitale, Cybersécurité', null, null, 'https://linkedin.com/in/pierre', 1, '180.00', 'CTO avec expérience internationale']
+        ];
+        
+        $insert = $pdo->prepare("INSERT INTO consultants (full_name, email, phone, speciality, expertise, image, cv_path, linkedin, is_available, hourly_rate, bio) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        foreach ($consultants as $consultant) {
+            $insert->execute($consultant);
+        }
+        echo "✅ Consultants créés<br>";
+    } else {
+        echo "✓ Consultants existent déjà<br>";
+    }
+    
     // À Propos
     $stmt = $pdo->query("SELECT COUNT(*) as count FROM about");
     $result = $stmt->fetch();
@@ -129,5 +149,6 @@ echo "<hr>";
 echo "<div style='background: #d4edda; padding: 15px; border-radius: 5px; margin-top: 20px;'>";
 echo "<h4>✅ Installation terminée !</h4>";
 echo "<p><a href='index.php'>Retour au site</a> | <a href='?page=admin-login'>Admin</a></p>";
+echo "<p style='color: #155724;'><strong>Identifiants:</strong> admin / admin123</p>";
 echo "</div>";
 ?>

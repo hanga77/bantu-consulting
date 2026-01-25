@@ -7,13 +7,19 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$id = $_GET['id'] ?? 0;
+if (!isset($_GET['id'])) {
+    $_SESSION['error'] = 'ID manquant';
+    header('Location: ../?page=admin-dashboard&section=carousel');
+    exit;
+}
 
 try {
-    $pdo->prepare("DELETE FROM carousel WHERE id=?")->execute([$id]);
-    $_SESSION['success'] = 'Image supprimée avec succès';
+    $id = intval($_GET['id']);
+    $stmt = $pdo->prepare("DELETE FROM carousel WHERE id = ?");
+    $stmt->execute([$id]);
+    $_SESSION['success'] = 'Image supprimée !';
 } catch (PDOException $e) {
-    $_SESSION['error'] = 'Erreur lors de la suppression';
+    $_SESSION['error'] = 'Erreur: ' . $e->getMessage();
 }
 
 header('Location: ../?page=admin-dashboard&section=carousel');

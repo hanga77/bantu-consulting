@@ -89,7 +89,12 @@ $next_service = $current_index < count($all_services) - 1 ? $all_services[$curre
                                     <i class="fas fa-file-pdf text-danger"></i> 
                                     <strong><?php echo htmlspecialchars($file['file_name']); ?></strong>
                                     <br>
-                                    <small class="text-muted"><?php echo date('d/m/Y', strtotime($file['uploaded_at'])); ?></small>
+                                    <?php if (!empty($service['updated_at'])): ?>
+    <p class="text-muted">
+        Mis à jour le <?= date('d/m/Y', strtotime($service['updated_at'])) ?>
+    </p>
+<?php endif; ?>
+
                                 </div>
                                 <i class="fas fa-download text-primary"></i>
                             </a>

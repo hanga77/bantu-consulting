@@ -445,3 +445,14 @@ footer ul li {
         font-size: 1rem;
     }
 }
+
+/* Onglets visibles */
+#settingsTabs .nav-link {
+    color: #333 !important;
+}
+
+#settingsTabs .nav-link.active {
+    color: #ff6b00 !important;
+    background-color: #fff !important;
+    border-color: #dee2e6 #dee2e6 #fff !important;
+}

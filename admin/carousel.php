@@ -47,7 +47,7 @@
             <td><?php echo htmlspecialchars($item['title']); ?></td>
             <td><?php echo $item['order_pos']; ?></td>
             <td>
-                <a href="actions/delete-carousel.php?id=<?php echo $item['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Confirmer la suppression ?')">Supprimer</a>
+                <a href="actions/delete-carousel.php?id=<?php echo $item['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Confirmer la suppression ?')"><i class="fas fa-trash"></i></a>
             </td>
         </tr>
         <?php endforeach; else: ?>

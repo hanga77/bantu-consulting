@@ -21,9 +21,17 @@ try {
 // Fonction pour récupérer les paramètres du site
 function getSiteSettings() {
     global $pdo;
+
     try {
-        $stmt = $pdo->query("SELECT * FROM site_settings WHERE id = 1");
-        return $stmt->fetch() ?: [];
+        $stmt = $pdo->query("SELECT setting_key, setting_value FROM settings");
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $settings = [];
+        foreach ($rows as $row) {
+            $settings[$row['setting_key']] = $row['setting_value'];
+        }
+
+        return $settings;
     } catch (PDOException $e) {
         return [];
     }

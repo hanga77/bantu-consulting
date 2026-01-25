@@ -42,10 +42,10 @@
                     </td>
                     <td>
                         <a href="?page=admin-dashboard&section=teams&action=edit&id=<?php echo $team['id']; ?>" class="btn btn-sm btn-warning">
-                            <i class="fas fa-edit"></i> Modifier
+                            <i class="fas fa-edit"></i> 
                         </a>
                         <a href="actions/delete-team.php?id=<?php echo $team['id']; ?>" onclick="return confirm('Êtes-vous sûr?');" class="btn btn-sm btn-danger">
-                            <i class="fas fa-trash"></i> Supprimer
+                            <i class="fas fa-trash"></i> 
                         </a>
                     </td>
                 </tr>
