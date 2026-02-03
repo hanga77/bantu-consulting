@@ -1,0 +1,15 @@
+# ========================================
+# SÉCURITÉ - CONFIG
+# ========================================
+
+# Interdire l'accès à tous les fichiers
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>
+
+# Prévenir directory listing
+Options -Indexes

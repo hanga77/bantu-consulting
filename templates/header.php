@@ -69,6 +69,7 @@ $current_lang = $_SESSION['lang'] ?? 'fr';
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/style.css">
     
+    
     <style>
         :root {
             --primary: #1e40af;
@@ -188,6 +189,54 @@ $current_lang = $_SESSION['lang'] ?? 'fr';
         .btn-secondary:hover {
             background: var(--dark);
             transform: translateY(-2px);
+        }
+        
+        /* Images Circulaires pour Équipes */
+        .team-avatar {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            transition: var(--transition);
+        }
+        
+        .team-avatar:hover {
+            transform: scale(1.08);
+            box-shadow: 0 12px 30px rgba(30, 64, 175, 0.35);
+            border-color: var(--accent);
+        }
+        
+        .team-card-circular {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .team-card-circular .card-body {
+            padding-top: 0;
+        }
+        
+        .team-info-overlay {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .team-info-overlay::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(30, 64, 175, 0.1);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .team-info-overlay:hover::after {
+            opacity: 1;
         }
     </style>
 </head>

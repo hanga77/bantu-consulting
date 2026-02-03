@@ -64,6 +64,7 @@
 </div>
 <?php endif; ?>
 
+<!-- FORMULAIRE AJOUT -->
 <?php if (($_GET['action'] ?? '') === 'add'): ?>
 <div class="card border-0 shadow-lg mb-4">
     <div class="card-header bg-gradient text-white">
@@ -93,6 +94,10 @@
                         </select>
                         <small class="text-muted">Détermine l'ordre d'affichage</small>
                     </div>
+                    <div class="mb-3">
+                        <label for="experience" class="form-label fw-bold">Années d'expérience</label>
+                        <input type="number" class="form-control form-control-lg" id="experience" name="experience" value="0" min="0" max="50">
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
@@ -114,20 +119,30 @@
                     </div>
 
                     <div class="alert alert-success mb-3" role="alert">
-                        <i class="fas fa-star"></i> <strong>Pour un rôle support (secrétaire, accueil, RH, etc.)</strong><br>
-                        Laissez le champ "Département/Pôle" vide (valeur par défaut = "AUCUN")
+                        <i class="fas fa-star"></i> <strong>Pour un rôle support</strong><br>
+                        Laissez le champ "Département/Pôle" vide
                     </div>
+                    
                     <div class="mb-3">
                         <label for="image" class="form-label fw-bold">Photo *</label>
                         <input type="file" class="form-control form-control-lg" id="image" name="image" accept="image/*" required>
                         <small class="text-muted d-block mt-2">Format: JPG, PNG | Taille: max 2MB | Idéal: 300x350px</small>
+                        
+                        <!-- Aperçu d'image -->
+                        <div id="image-preview-add" class="mt-3" style="display: none;">
+                            <label class="form-label fw-bold">Aperçu:</label>
+                            <div style="max-width: 180px; border-radius: 50%; overflow: hidden; border: 3px solid #1e40af; margin: 0 auto;">
+                                <img id="preview-img-add" src="" alt="Aperçu" style="width: 100%; height: 100%; display: block; object-fit: cover;">
+                            </div>
+                            <small class="text-muted d-block mt-2 text-center" id="image-info-add"></small>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="mb-3">
                 <label for="role" class="form-label fw-bold">Description/Rôle</label>
-                <textarea class="form-control" id="role" name="role" rows="5" placeholder="Décrivez les responsabilités, expériences et fonctions principales..."></textarea>
+                <textarea class="form-control" id="role" name="role" rows="5" placeholder="Décrivez les responsabilités..."></textarea>
             </div>
 
             <!-- Réseaux Sociaux -->
@@ -136,7 +151,6 @@
                     <h6 class="mb-0"><i class="fas fa-share-alt"></i> Réseaux Sociaux (Optionnel)</h6>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted small mb-3">Ajouter les profils des réseaux sociaux du membre pour plus de visibilité</p>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="linkedin" class="form-label"><i class="fab fa-linkedin text-info"></i> LinkedIn</label>
@@ -162,11 +176,6 @@
                 </div>
             </div>
 
-            <div class="alert alert-info">
-                <i class="fas fa-lightbulb"></i> 
-                <strong>Conseil :</strong> Le premier membre ajouté à un département s'affichera comme "Responsable". Les suivants s'afficheront dans la section "Équipe".
-            </div>
-
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-success btn-lg">
                     <i class="fas fa-save"></i> Enregistrer
@@ -178,8 +187,35 @@
         </form>
     </div>
 </div>
+
+<script>
+// Aperçu d'image pour formulaire ajout
+document.getElementById('image').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = document.getElementById('preview-img-add');
+            img.src = event.target.result;
+            
+            const image = new Image();
+            image.onload = function() {
+                const info = document.getElementById('image-info-add');
+                info.innerHTML = `${image.width}x${image.height}px | ${(file.size / 1024).toFixed(0)}KB`;
+            };
+            image.src = event.target.result;
+            
+            document.getElementById('image-preview-add').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        document.getElementById('image-preview-add').style.display = 'none';
+    }
+});
+</script>
 <?php endif; ?>
 
+<!-- FORMULAIRE ÉDITION -->
 <?php if (($_GET['action'] ?? '') === 'edit' && isset($_GET['id'])): ?>
 <div class="card border-0 shadow-lg mb-4">
     <div class="card-header bg-gradient text-white">
@@ -199,19 +235,20 @@
         ?>
         <form method="POST" action="actions/save-team.php" enctype="multipart/form-data">
             <input type="hidden" name="id" value="<?php echo $team['id']; ?>">
+            
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="name" class="form-label fw-bold">Nom complet *</label>
-                        <input type="text" class="form-control form-control-lg" id="name" name="name" value="<?php echo htmlspecialchars($team['name']); ?>" required>
+                        <label for="name_edit" class="form-label fw-bold">Nom complet *</label>
+                        <input type="text" class="form-control form-control-lg" id="name_edit" name="name" value="<?php echo htmlspecialchars($team['name']); ?>" required>
                     </div>
                     <div class="mb-3">
-                        <label for="position" class="form-label fw-bold">Poste/Titre *</label>
-                        <input type="text" class="form-control form-control-lg" id="position" name="position" value="<?php echo htmlspecialchars($team['position']); ?>" required>
+                        <label for="position_edit" class="form-label fw-bold">Poste/Titre *</label>
+                        <input type="text" class="form-control form-control-lg" id="position_edit" name="position" value="<?php echo htmlspecialchars($team['position']); ?>" required>
                     </div>
                     <div class="mb-3">
-                        <label for="importance" class="form-label fw-bold">Importance/Responsabilité</label>
-                        <select class="form-control form-control-lg" id="importance" name="importance">
+                        <label for="importance_edit" class="form-label fw-bold">Importance/Responsabilité</label>
+                        <select class="form-control form-control-lg" id="importance_edit" name="importance">
                             <option value="">-- Sélectionner --</option>
                             <option value="Responsable" <?php echo $team['importance'] === 'Responsable' ? 'selected' : ''; ?>>Responsable</option>
                             <option value="Manager" <?php echo $team['importance'] === 'Manager' ? 'selected' : ''; ?>>Manager</option>
@@ -219,13 +256,17 @@
                             <option value="Spécialiste" <?php echo $team['importance'] === 'Spécialiste' ? 'selected' : ''; ?>>Spécialiste</option>
                             <option value="Coordinateur" <?php echo $team['importance'] === 'Coordinateur' ? 'selected' : ''; ?>>Coordinateur</option>
                         </select>
-                        <small class="text-muted">Détermine l'ordre d'affichage</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="experience_edit" class="form-label fw-bold">Années d'expérience</label>
+                        <input type="number" class="form-control form-control-lg" id="experience_edit" name="experience" value="<?php echo htmlspecialchars($team['experience'] ?? 0); ?>" min="0" max="50">
                     </div>
                 </div>
+                
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="department_id" class="form-label fw-bold">Département/Pôle <span class="badge bg-warning text-dark">OPTIONNEL</span></label>
-                        <select class="form-control form-control-lg" id="department_id" name="department_id">
+                        <label for="department_id_edit" class="form-label fw-bold">Département/Pôle <span class="badge bg-warning text-dark">OPTIONNEL</span></label>
+                        <select class="form-control form-control-lg" id="department_id_edit" name="department_id">
                             <option value="">-- AUCUN (Pas de département) --</option>
                             <?php
                             try {
@@ -235,25 +276,38 @@
                             <option value="<?php echo $dept['id']; ?>" <?php echo $team['department_id'] == $dept['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($dept['name']); ?></option>
                             <?php endforeach; } catch (Exception $e) {} ?>
                         </select>
-                        <small class="text-muted d-block mt-2">
-                            <strong>✓ AVEC département</strong> : Affichage dans la page "Équipes" sous le département<br>
-                            <strong>✓ SANS département</strong> : Affichage dans "À Propos" → Section "Équipe Support & Transversale"
-                        </small>
                     </div>
+                    
                     <div class="mb-3">
-                        <label for="image" class="form-label fw-bold">Photo</label>
-                        <input type="file" class="form-control form-control-lg" id="image" name="image" accept="image/*">
-                        <small class="text-muted d-block mt-2">Format: JPG, PNG | Taille: max 2MB | Laisser vide pour garder l'image actuelle</small>
+                        <label for="image_edit" class="form-label fw-bold">Photo</label>
+                        <input type="file" class="form-control form-control-lg" id="image_edit" name="image" accept="image/*">
+                        <small class="text-muted d-block mt-2">Laisser vide pour garder l'image actuelle</small>
+                        
+                        <!-- Image actuelle -->
                         <?php if ($team['image']): ?>
-                        <img src="uploads/<?php echo htmlspecialchars($team['image']); ?>" alt="Photo" style="max-height: 150px; margin-top: 10px;">
+                        <div class="mt-3">
+                            <label class="form-label fw-bold">Image actuelle:</label>
+                            <div style="max-width: 180px; border-radius: 50%; overflow: hidden; border: 3px solid #1e40af; margin: 0 auto;">
+                                <img src="uploads/<?php echo htmlspecialchars($team['image']); ?>" alt="Photo" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                        </div>
                         <?php endif; ?>
+                        
+                        <!-- Aperçu nouvelle image -->
+                        <div id="image-preview-edit" class="mt-3" style="display: none;">
+                            <label class="form-label fw-bold">Nouvelle image:</label>
+                            <div style="max-width: 180px; border-radius: 50%; overflow: hidden; border: 3px solid #28a745; margin: 0 auto;">
+                                <img id="preview-img-edit" src="" alt="Aperçu" style="width: 100%; height: 100%; display: block; object-fit: cover;">
+                            </div>
+                            <small class="text-muted d-block mt-2 text-center" id="image-info-edit"></small>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="mb-3">
-                <label for="role" class="form-label fw-bold">Description/Rôle</label>
-                <textarea class="form-control" id="role" name="role" rows="5"><?php echo htmlspecialchars($team['role'] ?? ''); ?></textarea>
+                <label for="role_edit" class="form-label fw-bold">Description/Rôle</label>
+                <textarea class="form-control" id="role_edit" name="role" rows="5"><?php echo htmlspecialchars($team['role'] ?? ''); ?></textarea>
             </div>
 
             <!-- Réseaux Sociaux -->
@@ -262,27 +316,26 @@
                     <h6 class="mb-0"><i class="fas fa-share-alt"></i> Réseaux Sociaux (Optionnel)</h6>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted small mb-3">Ajouter les profils des réseaux sociaux du membre pour plus de visibilité</p>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label for="linkedin" class="form-label"><i class="fab fa-linkedin text-info"></i> LinkedIn</label>
-                            <input type="url" class="form-control" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/..." value="<?php echo htmlspecialchars($team['linkedin'] ?? ''); ?>">
+                            <label for="linkedin_edit" class="form-label"><i class="fab fa-linkedin text-info"></i> LinkedIn</label>
+                            <input type="url" class="form-control" id="linkedin_edit" name="linkedin" placeholder="https://linkedin.com/in/..." value="<?php echo htmlspecialchars($team['linkedin'] ?? ''); ?>">
                         </div>
                         <div class="col-md-6">
-                            <label for="twitter" class="form-label"><i class="fab fa-twitter text-info"></i> Twitter</label>
-                            <input type="url" class="form-control" id="twitter" name="twitter" placeholder="https://twitter.com/..." value="<?php echo htmlspecialchars($team['twitter'] ?? ''); ?>">
+                            <label for="twitter_edit" class="form-label"><i class="fab fa-twitter text-info"></i> Twitter</label>
+                            <input type="url" class="form-control" id="twitter_edit" name="twitter" placeholder="https://twitter.com/..." value="<?php echo htmlspecialchars($team['twitter'] ?? ''); ?>">
                         </div>
                         <div class="col-md-6">
-                            <label for="facebook" class="form-label"><i class="fab fa-facebook text-primary"></i> Facebook</label>
-                            <input type="url" class="form-control" id="facebook" name="facebook" placeholder="https://facebook.com/..." value="<?php echo htmlspecialchars($team['facebook'] ?? ''); ?>">
+                            <label for="facebook_edit" class="form-label"><i class="fab fa-facebook text-primary"></i> Facebook</label>
+                            <input type="url" class="form-control" id="facebook_edit" name="facebook" placeholder="https://facebook.com/..." value="<?php echo htmlspecialchars($team['facebook'] ?? ''); ?>">
                         </div>
                         <div class="col-md-6">
-                            <label for="instagram" class="form-label"><i class="fab fa-instagram text-danger"></i> Instagram</label>
-                            <input type="url" class="form-control" id="instagram" name="instagram" placeholder="https://instagram.com/..." value="<?php echo htmlspecialchars($team['instagram'] ?? ''); ?>">
+                            <label for="instagram_edit" class="form-label"><i class="fab fa-instagram text-danger"></i> Instagram</label>
+                            <input type="url" class="form-control" id="instagram_edit" name="instagram" placeholder="https://instagram.com/..." value="<?php echo htmlspecialchars($team['instagram'] ?? ''); ?>">
                         </div>
                         <div class="col-md-6">
-                            <label for="website" class="form-label"><i class="fas fa-globe text-success"></i> Site Web</label>
-                            <input type="url" class="form-control" id="website" name="website" placeholder="https://monsite.com" value="<?php echo htmlspecialchars($team['website'] ?? ''); ?>">
+                            <label for="website_edit" class="form-label"><i class="fas fa-globe text-success"></i> Site Web</label>
+                            <input type="url" class="form-control" id="website_edit" name="website" placeholder="https://monsite.com" value="<?php echo htmlspecialchars($team['website'] ?? ''); ?>">
                         </div>
                     </div>
                 </div>
@@ -297,7 +350,33 @@
                 </a>
             </div>
         </form>
-        <?php }} catch (Exception $e) { echo '<div class="alert alert-danger">Erreur: ' . htmlspecialchars($e->getMessage()) . '</div>'; } ?>
+
+        <script>
+        // Aperçu d'image pour formulaire édition
+        document.getElementById('image_edit').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = document.getElementById('preview-img-edit');
+                    img.src = event.target.result;
+                    
+                    const image = new Image();
+                    image.onload = function() {
+                        const info = document.getElementById('image-info-edit');
+                        info.innerHTML = `${image.width}x${image.height}px | ${(file.size / 1024).toFixed(0)}KB`;
+                    };
+                    image.src = event.target.result;
+                    
+                    document.getElementById('image-preview-edit').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                document.getElementById('image-preview-edit').style.display = 'none';
+            }
+        });
+        </script>
+        <?php } } catch (Exception $e) { echo '<div class="alert alert-danger">Erreur: ' . htmlspecialchars($e->getMessage()) . '</div>'; } ?>
     </div>
 </div>
 <?php endif; ?>

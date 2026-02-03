@@ -1,81 +1,75 @@
 <?php
 session_start();
 require_once '../config/database.php';
+require_once '../includes/image-processing.php';
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../?page=admin-login');
     exit;
 }
 
-$name = $_POST['name'] ?? '';
-$specialty = $_POST['specialty'] ?? '';
-$description = $_POST['description'] ?? '';
-$email = $_POST['email'] ?? '';
-$phone = $_POST['phone'] ?? '';
-$image = null;
+$name = trim($_POST['name'] ?? '');
+$specialty = trim($_POST['specialty'] ?? '');
+$description = trim($_POST['description'] ?? '');
+$email = trim($_POST['email'] ?? '');
+$phone = trim($_POST['phone'] ?? '');
 
 if (empty($name) || empty($specialty)) {
-    $_SESSION['error'] = 'Nom et spécialité sont obligatoires';
+    $_SESSION['error'] = 'Remplissez tous les champs obligatoires';
     header('Location: ../?page=admin-dashboard&section=experts');
     exit;
 }
 
-// Traiter l'image
-if (!empty($_FILES['image']['name'])) {
-    $upload_dir = '../uploads/experts/';
-    if (!is_dir($upload_dir)) {
-        mkdir($upload_dir, 0755, true);
-    }
-    
-    $file_ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
-    if (in_array($file_ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
-        $unique_name = time() . '_' . uniqid() . '.' . $file_ext;
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $unique_name)) {
-            $image = $unique_name;
-        }
-    }
-}
+$image_file = '';
 
 try {
+    // Traiter l'image s'il y en a une
+    if (!empty($_FILES['image']['name'])) {
+        try {
+            $result = processAndSaveImage($_FILES['image'], 'expert', 300, 350, 90);
+            $image_file = $result['filename'];
+        } catch (Exception $e) {
+            $_SESSION['error'] = 'Erreur traitement image: ' . $e->getMessage();
+            header('Location: ../?page=admin-dashboard&section=experts');
+            exit;
+        }
+    }
+
     if (isset($_POST['id']) && !empty($_POST['id'])) {
         // Mise à jour
         $id = intval($_POST['id']);
-        $sql = "UPDATE experts SET name = :name, specialty = :specialty, description = :description, email = :email, phone = :phone";
-        $params = [
-            ':name' => $name,
-            ':specialty' => $specialty,
-            ':description' => $description,
-            ':email' => $email,
-            ':phone' => $phone
-        ];
         
-        if ($image) {
-            $sql .= ", image = :image";
-            $params[':image'] = $image;
+        $stmt = $pdo->prepare("SELECT * FROM experts WHERE id = ?");
+        $stmt->execute([$id]);
+        $expert = $stmt->fetch();
+        
+        if (!$expert) {
+            $_SESSION['error'] = 'Expert non trouvé';
+            header('Location: ../?page=admin-dashboard&section=experts');
+            exit;
         }
         
-        $sql .= " WHERE id = :id";
-        $params[':id'] = $id;
+        // Si pas de nouvelle image, garder l'ancienne
+        if (empty($image_file)) {
+            $image_file = $expert['image'];
+        } else {
+            // Supprimer l'ancienne image
+            if (!empty($expert['image'])) {
+                deleteImage($expert['image']);
+            }
+        }
         
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute($params);
+        $stmt = $pdo->prepare("UPDATE experts SET name = ?, specialty = ?, description = ?, email = ?, phone = ?, image = ?, updated_at = NOW() WHERE id = ?");
+        $stmt->execute([$name, $specialty, $description, $email, $phone, $image_file, $id]);
+        $_SESSION['success'] = 'Expert mis à jour avec succès !';
     } else {
         // Création
-        $stmt = $pdo->prepare("INSERT INTO experts (name, specialty, description, email, phone, image) 
-                               VALUES (:name, :specialty, :description, :email, :phone, :image)");
-        $stmt->execute([
-            ':name' => $name,
-            ':specialty' => $specialty,
-            ':description' => $description,
-            ':email' => $email,
-            ':phone' => $phone,
-            ':image' => $image
-        ]);
+        $stmt = $pdo->prepare("INSERT INTO experts (name, specialty, description, email, phone, image) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$name, $specialty, $description, $email, $phone, $image_file]);
+        $_SESSION['success'] = 'Expert ajouté avec succès !';
     }
-    
-    $_SESSION['success'] = 'Expert sauvegardé avec succès !';
 } catch (PDOException $e) {
-    $_SESSION['error'] = 'Erreur: ' . $e->getMessage();
+    $_SESSION['error'] = 'Erreur lors de l\'enregistrement : ' . $e->getMessage();
 }
 
 header('Location: ../?page=admin-dashboard&section=experts');

@@ -1,0 +1,40 @@
+# ========================================
+# SÉCURITÉ - UPLOADS
+# ========================================
+
+# Interdire l'exécution de PHP
+<FilesMatch "\.(php|phtml|php3|php4|php5|php6|php7|php8|shtml|phar|pht|phps)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Autoriser les images et documents
+<FilesMatch "\.(jpg|jpeg|gif|png|pdf|doc|docx|xls|xlsx|txt|zip)$">
+    <IfModule mod_authz_core.c>
+        Require all granted
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Allow from all
+    </IfModule>
+</FilesMatch>
+
+# Bloquer l'accès aux fichiers sans extension
+<FilesMatch "^[^\.]+$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+</FilesMatch>
+
+# Prévenir directory listing
+Options -Indexes
+
+# Cache des images
+<FilesMatch "\.(jpg|jpeg|gif|png|webp)$">
+    Header set Cache-Control "max-age=31536000, public"
+</FilesMatch>

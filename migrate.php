@@ -21,76 +21,126 @@ try {
     echo '<h1>🔧 Migration de la Base de Données</h1>';
     echo '<hr>';
 
-    // Vérifier si la colonne presentation_video existe
-    $result = $pdo->query("SHOW COLUMNS FROM site_settings LIKE 'presentation_video'");
+    // Migration 1: Ajouter les colonnes de traitement d'image à teams
+    $result = $pdo->query("SHOW COLUMNS FROM teams LIKE 'image_width'");
     if ($result->rowCount() === 0) {
-        echo '<p>Ajout de la colonne <strong>presentation_video</strong>...</p>';
-        $pdo->exec("ALTER TABLE site_settings ADD COLUMN presentation_video VARCHAR(500) AFTER address");
-        echo '<p style="color: green;">✅ Colonne presentation_video ajoutée</p>';
+        echo '<p>Ajout des colonnes de traitement d\'image à <strong>teams</strong>...</p>';
+        $pdo->exec("ALTER TABLE teams ADD COLUMN image_width INT DEFAULT 0 AFTER image");
+        $pdo->exec("ALTER TABLE teams ADD COLUMN image_height INT DEFAULT 0 AFTER image_width");
+        $pdo->exec("ALTER TABLE teams ADD COLUMN image_processed_at TIMESTAMP NULL AFTER image_height");
+        echo '<p style="color: green;">✅ Colonnes image_width, image_height, image_processed_at ajoutées à teams</p>';
     } else {
-        echo '<p style="color: blue;">✓ Colonne presentation_video existe déjà</p>';
+        echo '<p style="color: blue;">✓ Colonnes de traitement d\'image existent déjà dans teams</p>';
     }
 
-    // Vérifier et ajouter les autres colonnes manquantes
-    $columns_to_add = [
-        ['name' => 'meta_title', 'definition' => 'VARCHAR(255)', 'after' => 'presentation_video'],
-        ['name' => 'meta_description', 'definition' => 'VARCHAR(255)', 'after' => 'meta_title'],
-        ['name' => 'footer_text', 'definition' => 'TEXT', 'after' => 'meta_description'],
-    ];
+    // Migration 2: Ajouter la colonne experience à teams si manquante
+    $result = $pdo->query("SHOW COLUMNS FROM teams LIKE 'experience'");
+    if ($result->rowCount() === 0) {
+        echo '<p>Ajout de la colonne <strong>experience</strong> à teams...</p>';
+        $pdo->exec("ALTER TABLE teams ADD COLUMN experience INT DEFAULT 0 AFTER role");
+        echo '<p style="color: green;">✅ Colonne experience ajoutée à teams</p>';
+    } else {
+        echo '<p style="color: blue;">✓ Colonne experience existe déjà dans teams</p>';
+    }
 
-    foreach ($columns_to_add as $column) {
-        $result = $pdo->query("SHOW COLUMNS FROM site_settings LIKE '{$column['name']}'");
+    // Migration 3: Ajouter les colonnes de traitement d'image à carousel
+    $result = $pdo->query("SHOW COLUMNS FROM carousel LIKE 'image_width'");
+    if ($result->rowCount() === 0) {
+        echo '<p>Ajout des colonnes de traitement d\'image à <strong>carousel</strong>...</p>';
+        $pdo->exec("ALTER TABLE carousel ADD COLUMN image_width INT DEFAULT 0 AFTER image");
+        $pdo->exec("ALTER TABLE carousel ADD COLUMN image_height INT DEFAULT 0 AFTER image_width");
+        $pdo->exec("ALTER TABLE carousel ADD COLUMN image_processed_at TIMESTAMP NULL AFTER image_height");
+        echo '<p style="color: green;">✅ Colonnes image_width, image_height, image_processed_at ajoutées à carousel</p>';
+    } else {
+        echo '<p style="color: blue;">✓ Colonnes de traitement d\'image existent déjà dans carousel</p>';
+    }
+
+    // Migration 4: Ajouter les colonnes de réseaux sociaux à teams si manquantes
+    $columns_sociaux = ['linkedin', 'twitter', 'facebook', 'instagram', 'website'];
+    foreach ($columns_sociaux as $col) {
+        $result = $pdo->query("SHOW COLUMNS FROM teams LIKE '{$col}'");
         if ($result->rowCount() === 0) {
-            echo '<p>Ajout de la colonne <strong>' . $column['name'] . '</strong>...</p>';
-            $pdo->exec("ALTER TABLE site_settings ADD COLUMN {$column['name']} {$column['definition']} AFTER {$column['after']}");
-            echo '<p style="color: green;">✅ Colonne ' . $column['name'] . ' ajoutée</p>';
-        } else {
-            echo '<p style="color: blue;">✓ Colonne ' . $column['name'] . ' existe déjà</p>';
+            echo '<p>Ajout de la colonne <strong>' . $col . '</strong> à teams...</p>';
+            $pdo->exec("ALTER TABLE teams ADD COLUMN {$col} VARCHAR(255) DEFAULT '' AFTER linkedin");
+            echo '<p style="color: green;">✅ Colonne ' . $col . ' ajoutée</p>';
         }
     }
 
-    // Mettre à jour les données par défaut si nécessaire
-    $stmt = $pdo->query("SELECT COUNT(*) as count FROM site_settings");
-    $result = $stmt->fetch();
-
-    if ($result['count'] === 0) {
-        echo '<p>Création des paramètres par défaut...</p>';
-        $pdo->exec("INSERT INTO site_settings (
-            site_name, site_description, site_keywords, 
-            contact_email, contact_email2, phone, address,
-            presentation_video,
-            meta_title, meta_description, footer_text
-        ) VALUES (
-            'Bantu Consulting',
-            'Solutions innovantes en conseil, stratégie et transformation digitale',
-            'consulting, conseil, stratégie, transformation digitale',
-            'contact@bantu-consulting.com',
-            'info@bantu-consulting.com',
-            '+243 818 818 818',
-            'Kinshasa, République Démocratique du Congo',
-            'https://www.youtube.com/embed/dQw4w9WgXcQ',
-            'Bantu Consulting | Conseil & Stratégie',
-            'Solutions complètes de conseil en stratégie et transformation digitale',
-            '© 2024 Bantu Consulting. Tous droits réservés.'
-        )");
-        echo '<p style="color: green;">✅ Paramètres par défaut créés</p>';
-    } else {
-        echo '<p style="color: blue;">✓ Paramètres existent déjà</p>';
+    // Migration 5: Corriger la structure de project_images
+    $result = $pdo->query("SHOW COLUMNS FROM project_images LIKE 'sort_order'");
+    if ($result->rowCount() > 0) {
+        echo '<p>Renommage de <strong>sort_order</strong> en <strong>order_pos</strong> dans project_images...</p>';
+        $pdo->exec("ALTER TABLE project_images CHANGE sort_order order_pos INT DEFAULT 0");
+        echo '<p style="color: green;">✅ Colonne renommée</p>';
     }
 
-    // Créer la table project_images si elle n'existe pas
-    echo '<p>Création de la table <strong>project_images</strong>...</p>';
-    $pdo->exec("CREATE TABLE IF NOT EXISTS project_images (
-        id INT PRIMARY KEY AUTO_INCREMENT,
-        project_id INT NOT NULL,
-        image VARCHAR(255) NOT NULL,
-        title VARCHAR(100),
-        description TEXT,
-        order_pos INT DEFAULT 0,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
-    )");
-    echo '<p style="color: green;">✅ Table project_images créée</p>';
+    // Migration 6: Ajouter les colonnes manquantes à service_files
+    $columns_service_files = ['file_name', 'file_type', 'sort_order'];
+    $result = $pdo->query("SHOW COLUMNS FROM service_files");
+    $existing_cols = [];
+    while ($row = $result->fetch()) {
+        $existing_cols[] = $row['Field'];
+    }
+
+    if (!in_array('file_name', $existing_cols)) {
+        echo '<p>Ajout de <strong>file_name</strong> à service_files...</p>';
+        $pdo->exec("ALTER TABLE service_files ADD COLUMN file_name VARCHAR(255) AFTER file_path");
+        echo '<p style="color: green;">✅ Colonne file_name ajoutée</p>';
+    }
+
+    if (!in_array('file_type', $existing_cols)) {
+        echo '<p>Ajout de <strong>file_type</strong> à service_files...</p>';
+        $pdo->exec("ALTER TABLE service_files ADD COLUMN file_type VARCHAR(50) AFTER file_name");
+        echo '<p style="color: green;">✅ Colonne file_type ajoutée</p>';
+    }
+
+    if (!in_array('sort_order', $existing_cols)) {
+        echo '<p>Ajout de <strong>sort_order</strong> à service_files...</p>';
+        $pdo->exec("ALTER TABLE service_files ADD COLUMN sort_order INT DEFAULT 0 AFTER file_type");
+        echo '<p style="color: green;">✅ Colonne sort_order ajoutée</p>';
+    }
+
+    // Migration 7: Ajouter les colonnes de localisation à site_settings
+    $result = $pdo->query("SHOW COLUMNS FROM site_settings LIKE 'latitude'");
+    if ($result->rowCount() === 0) {
+        echo '<p>Ajout des colonnes de localisation à <strong>site_settings</strong>...</p>';
+        $pdo->exec("ALTER TABLE site_settings ADD COLUMN latitude VARCHAR(50) DEFAULT '4.0511' AFTER address");
+        $pdo->exec("ALTER TABLE site_settings ADD COLUMN longitude VARCHAR(50) DEFAULT '9.7679' AFTER latitude");
+        echo '<p style="color: green;">✅ Colonnes latitude et longitude ajoutées à site_settings</p>';
+    } else {
+        echo '<p style="color: blue;">✓ Colonnes de localisation existent déjà</p>';
+    }
+
+    // Migration 8: Créer la table newsletter
+    $result = $pdo->query("SHOW TABLES LIKE 'newsletter_subscribers'");
+    if ($result->rowCount() === 0) {
+        echo '<p>Création de la table <strong>newsletter_subscribers</strong>...</p>';
+        $pdo->exec("
+            CREATE TABLE newsletter_subscribers (
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                email VARCHAR(255) UNIQUE NOT NULL,
+                name VARCHAR(100),
+                status VARCHAR(50) DEFAULT 'active',
+                subscribed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )
+        ");
+        echo '<p style="color: green;">✅ Table newsletter_subscribers créée</p>';
+    } else {
+        echo '<p style="color: blue;">✓ Table newsletter_subscribers existe déjà</p>';
+    }
+
+    // Migration 9: Ajouter les colonnes de traitement d'image à projects
+    $result = $pdo->query("SHOW COLUMNS FROM projects LIKE 'image_width'");
+    if ($result->rowCount() === 0) {
+        echo '<p>Ajout des colonnes de traitement d\'image à <strong>projects</strong>...</p>';
+        $pdo->exec("ALTER TABLE projects ADD COLUMN image_width INT DEFAULT 0 AFTER image");
+        $pdo->exec("ALTER TABLE projects ADD COLUMN image_height INT DEFAULT 0 AFTER image_width");
+        $pdo->exec("ALTER TABLE projects ADD COLUMN image_processed_at TIMESTAMP NULL AFTER image_height");
+        echo '<p style="color: green;">✅ Colonnes image_width, image_height, image_processed_at ajoutées à projects</p>';
+    } else {
+        echo '<p style="color: blue;">✓ Colonnes de traitement d\'image existent déjà dans projects</p>';
+    }
 
     echo '<hr>';
     echo '<p style="color: green; font-size: 18px;"><strong>✅ Migration terminée avec succès !</strong></p>';
@@ -100,8 +150,8 @@ try {
 } catch (PDOException $e) {
     echo '<div style="font-family: Arial; margin: 50px; color: red;">';
     echo '<h1>❌ Erreur de migration</h1>';
-    echo '<p>' . htmlspecialchars($e->getMessage()) . '</p>';
-    echo '<p><a href="migrate.php">Réessayer</a></p>';
+    echo '<p><strong>Erreur:</strong> ' . htmlspecialchars($e->getMessage()) . '</p>';
+    echo '<p><a href="migrate.php" style="padding: 10px 20px; background: #dc2626; color: white; text-decoration: none; border-radius: 5px;">Réessayer</a></p>';
     echo '</div>';
 }
 

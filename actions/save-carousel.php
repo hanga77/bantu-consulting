@@ -1,44 +1,41 @@
 <?php
 session_start();
 require_once '../config/database.php';
+require_once '../includes/image-processing.php';
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../?page=admin-login');
     exit;
 }
 
-$title = $_POST['title'] ?? '';
-$description = $_POST['description'] ?? '';
-$order_pos = $_POST['order_pos'] ?? 0;
-$image = null;
-
-// Traiter l'image
-if (!empty($_FILES['image']['name'])) {
-    $upload_dir = '../uploads/carousel/';
-    if (!is_dir($upload_dir)) {
-        mkdir($upload_dir, 0755, true);
-    }
-    
-    $file_ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
-    if (in_array($file_ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
-        $unique_name = 'carousel_' . time() . '_' . uniqid() . '.' . $file_ext;
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $unique_name)) {
-            $image = $unique_name;
-        }
-    }
-}
-
-if (!$image) {
-    $_SESSION['error'] = 'Erreur lors du téléchargement de l\'image';
-    header('Location: ../?page=admin-dashboard&section=carousel');
-    exit;
-}
+$title = trim($_POST['title'] ?? '');
+$description = trim($_POST['description'] ?? '');
+$order_pos = intval($_POST['order_pos'] ?? 0);
 
 try {
-    $stmt = $pdo->prepare("INSERT INTO carousel (image, title, description, order_pos) VALUES (?, ?, ?, ?)");
-    $stmt->execute([$image, $title, $description, $order_pos]);
-    $_SESSION['success'] = 'Image ajoutée au carrousel !';
-} catch (PDOException $e) {
+    if (!isset($_FILES['image']) || $_FILES['image']['error'] === UPLOAD_ERR_NO_FILE) {
+        throw new Exception("Aucune image fournie.");
+    }
+    
+    // Images optimisées pour carousel: 1920x1080 (16:9)
+    $imageData = processAndSaveImage($_FILES['image'], 'carousel', 1920, 1080, 85);
+    
+    $imageName = $imageData['filename'];
+    $imageWidth = $imageData['width'];
+    $imageHeight = $imageData['height'];
+    
+    // Vérifier que les colonnes existent
+    $stmt = $pdo->query("SHOW COLUMNS FROM carousel LIKE 'image_width'");
+    if ($stmt->rowCount() === 0) {
+        throw new Exception("Les colonnes de traitement d'image manquent. Veuillez exécuter la migration: migrate.php");
+    }
+    
+    $stmt = $pdo->prepare("INSERT INTO carousel (image, image_width, image_height, image_processed_at, title, description, order_pos) VALUES (?, ?, ?, NOW(), ?, ?, ?)");
+    $stmt->execute([$imageName, $imageWidth, $imageHeight, $title, $description, $order_pos]);
+    
+    $_SESSION['success'] = 'Image ajoutée au carrousel avec succès!';
+    
+} catch (Exception $e) {
     $_SESSION['error'] = 'Erreur: ' . $e->getMessage();
 }
 

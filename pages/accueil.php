@@ -118,6 +118,104 @@ $settings = getSiteSettings();
     </div>
 </section>
 
+<!-- SECTION CARTE - LOCALISATION -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
+                <div class="mb-4">
+                    <h2 class="display-5 fw-bold mb-3">📍 Où nous trouver ?</h2>
+                    <p class="lead text-muted">Visitez-nous à notre siège social à Kinshasa</p>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3"><i class="fas fa-map-marker-alt text-danger"></i> Adresse</h5>
+                        <p class="mb-0"><?php echo htmlspecialchars($settings['address'] ?? 'Kinshasa, RDC'); ?></p>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3"><i class="fas fa-phone text-primary"></i> Téléphone</h5>
+                        <p class="mb-0">
+                            <a href="tel:<?php echo htmlspecialchars($settings['phone'] ?? ''); ?>" class="text-decoration-none">
+                                <?php echo htmlspecialchars($settings['phone'] ?? ''); ?>
+                            </a>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3"><i class="fas fa-envelope text-success"></i> Email</h5>
+                        <p class="mb-0">
+                            <a href="mailto:<?php echo htmlspecialchars($settings['contact_email'] ?? ''); ?>" class="text-decoration-none">
+                                <?php echo htmlspecialchars($settings['contact_email'] ?? ''); ?>
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6" data-aos="fade-left">
+                <!-- Carte Leaflet -->
+                <div id="map" style="height: 450px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); overflow: hidden;"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Scripts Leaflet -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Coordonnées de la structure
+    const latitude = parseFloat('<?php echo $settings["latitude"] ?? "4.0511"; ?>');
+    const longitude = parseFloat('<?php echo $settings["longitude"] ?? "9.7679"; ?>');
+    const address = '<?php echo htmlspecialchars($settings["address"] ?? "Kinshasa"); ?>';
+    
+    // Créer la carte
+    const map = L.map('map').setView([latitude, longitude], 14);
+    
+    // Ajouter la couche de tuiles OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+    }).addTo(map);
+    
+    // Ajouter un marqueur
+    const marker = L.marker([latitude, longitude], {
+        icon: L.icon({
+            iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        })
+    }).addTo(map);
+    
+    // Ajouter une popup au marqueur
+    marker.bindPopup(`
+        <div style="font-family: Poppins;">
+            <strong>Bantu Consulting</strong><br>
+            ${address}<br>
+            <a href="https://www.google.com/maps?q=${latitude},${longitude}" target="_blank" class="btn btn-sm btn-primary mt-2">
+                Voir sur Google Maps
+            </a>
+        </div>
+    `).openPopup();
+    
+    // Redimensionner la carte au chargement
+    setTimeout(function() {
+        map.invalidateSize();
+    }, 100);
+});
+</script>
+
 <!-- APPEL À L'ACTION -->
 <section class="py-5 bg-gradient">
     <div class="container text-center" data-aos="zoom-in">

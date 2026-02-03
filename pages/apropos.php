@@ -54,34 +54,59 @@ $teams_no_dept = $pdo->query("SELECT * FROM teams WHERE department_id IS NULL OR
         </div>
         
         <?php if (!empty($teams)): ?>
-        <div class="row g-4">
+        <div class="row g-4 justify-content-center">
             <?php foreach ($teams as $index => $member): ?>
-            <div class="col-md-6 mb-4" data-aos="fade-up" data-aos-delay="<?php echo ($index % 2) * 100; ?>">
-                <div class="card h-100 border-0 shadow-sm card-hover overflow-hidden">
-                    <div class="row g-0">
-                        <div class="col-md-4 position-relative">
-                            <?php if (!empty($member['image'])): ?>
-                            <img src="uploads/<?php echo htmlspecialchars($member['image']); ?>" 
-                                 class="img-fluid h-100" alt="<?php echo htmlspecialchars($member['name']); ?>" 
-                                 style="object-fit: cover; min-height: 280px;">
-                            <?php else: ?>
-                            <div class="bg-secondary text-white d-flex align-items-center justify-content-center h-100" style="min-height: 280px;">
-                                <i class="fas fa-user fa-4x"></i>
-                            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4" data-aos="fade-up" data-aos-delay="<?php echo ($index % 4) * 100; ?>">
+                <div class="card h-100 border-0 shadow-sm card-hover team-card-circular">
+                    <div class="team-info-overlay d-flex justify-content-center mb-3">
+                        <?php if (!empty($member['image'])): ?>
+                        <img src="uploads/<?php echo htmlspecialchars($member['image']); ?>" 
+                             class="team-avatar" alt="<?php echo htmlspecialchars($member['name']); ?>">
+                        <?php else: ?>
+                        <div class="team-avatar bg-secondary text-white d-flex align-items-center justify-content-center">
+                            <i class="fas fa-user fa-3x"></i>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold mb-1"><?php echo htmlspecialchars($member['name']); ?></h5>
+                        <p class="text-primary fw-bold mb-2"><?php echo htmlspecialchars($member['position']); ?></p>
+                        <div class="mb-2">
+                            <?php if (!empty($member['importance'])): ?>
+                            <span class="badge bg-info me-2"><i class="fas fa-star"></i> <?php echo htmlspecialchars($member['importance']); ?></span>
+                            <?php endif; ?>
+                            <?php if ($member['experience'] > 0): ?>
+                            <span class="badge bg-success"><i class="fas fa-clock"></i> <?php echo $member['experience']; ?> ans</span>
                             <?php endif; ?>
                         </div>
-                        <div class="col-md-8">
-                            <div class="card-body d-flex flex-column justify-content-center h-100">
-                                <h5 class="card-title fw-bold mb-2"><?php echo htmlspecialchars($member['name']); ?></h5>
-                                <p class="card-text mb-3">
-                                    <strong class="d-block text-primary mb-1"><?php echo htmlspecialchars($member['position']); ?></strong>
-                                    <span class="badge bg-info me-2"><i class="fas fa-briefcase"></i> <?php echo htmlspecialchars($member['importance']); ?></span>
-                                    <?php if ($member['experience'] > 0): ?>
-                                    <span class="badge bg-success"><i class="fas fa-clock"></i> <?php echo $member['experience']; ?> ans d'exp</span>
-                                    <?php endif; ?>
-                                </p>
-                                <p class="text-muted small mb-0"><?php echo htmlspecialchars(substr($member['role'], 0, 120)); ?></p>
-                            </div>
+                        <p class="text-muted small mb-3"><?php echo htmlspecialchars(substr($member['role'], 0, 100)); ?></p>
+                        <!-- Réseaux Sociaux -->
+                        <div class="social-links pt-2 border-top">
+                            <?php if (!empty($member['linkedin'])): ?>
+                            <a href="<?php echo htmlspecialchars($member['linkedin']); ?>" target="_blank" class="me-2" title="LinkedIn">
+                                <i class="fab fa-linkedin text-info"></i>
+                            </a>
+                            <?php endif; ?>
+                            <?php if (!empty($member['twitter'])): ?>
+                            <a href="<?php echo htmlspecialchars($member['twitter']); ?>" target="_blank" class="me-2" title="Twitter">
+                                <i class="fab fa-twitter text-primary"></i>
+                            </a>
+                            <?php endif; ?>
+                            <?php if (!empty($member['facebook'])): ?>
+                            <a href="<?php echo htmlspecialchars($member['facebook']); ?>" target="_blank" class="me-2" title="Facebook">
+                                <i class="fab fa-facebook text-primary"></i>
+                            </a>
+                            <?php endif; ?>
+                            <?php if (!empty($member['instagram'])): ?>
+                            <a href="<?php echo htmlspecialchars($member['instagram']); ?>" target="_blank" class="me-2" title="Instagram">
+                                <i class="fab fa-instagram text-danger"></i>
+                            </a>
+                            <?php endif; ?>
+                            <?php if (!empty($member['website'])): ?>
+                            <a href="<?php echo htmlspecialchars($member['website']); ?>" target="_blank" title="Site Web">
+                                <i class="fas fa-globe text-success"></i>
+                            </a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -101,37 +126,57 @@ $teams_no_dept = $pdo->query("SELECT * FROM teams WHERE department_id IS NULL OR
             <p class="text-muted fs-6">Nos collaborateurs en fonctions transversales</p>
         </div>
 
-        <div class="row g-4">
+        <div class="row g-4 justify-content-center">
             <?php foreach ($teams_no_dept as $index => $member): ?>
-            <div class="col-md-4 col-sm-6 mb-4" data-aos="fade-up" data-aos-delay="<?php echo ($index % 3) * 100; ?>">
-                <div class="card h-100 border-0 shadow-sm card-hover overflow-hidden">
-                    <div class="position-relative overflow-hidden">
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4" data-aos="fade-up" data-aos-delay="<?php echo ($index % 4) * 100; ?>">
+                <div class="card h-100 border-0 shadow-sm card-hover team-card-circular">
+                    <div class="team-info-overlay d-flex justify-content-center mb-3">
                         <?php if (!empty($member['image'])): ?>
                         <img src="uploads/<?php echo htmlspecialchars($member['image']); ?>" 
-                             class="card-img-top w-100" alt="<?php echo htmlspecialchars($member['name']); ?>" 
-                             style="height: 250px; object-fit: cover; transition: transform 0.3s;">
+                             class="team-avatar" alt="<?php echo htmlspecialchars($member['name']); ?>">
                         <?php else: ?>
-                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center w-100" style="height: 250px;">
-                            <i class="fas fa-user fa-4x"></i>
+                        <div class="team-avatar bg-secondary text-white d-flex align-items-center justify-content-center">
+                            <i class="fas fa-user fa-3x"></i>
                         </div>
                         <?php endif; ?>
-                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" 
-                             style="background: rgba(30, 64, 175, 0.85); opacity: 0; transition: opacity 0.3s;">
-                            <div class="text-center text-white">
-                                <i class="fas fa-search-plus fa-3x mb-2"></i>
-                                <p class="mb-0 fw-bold">Voir profil</p>
-                            </div>
-                        </div>
                     </div>
-                    <div class="card-body d-flex flex-column justify-content-center">
-                        <h5 class="card-title fw-bold mb-2"><?php echo htmlspecialchars($member['name']); ?></h5>
-                        <p class="card-text mb-3">
-                            <strong class="d-block text-primary mb-1"><?php echo htmlspecialchars($member['position']); ?></strong>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold mb-1"><?php echo htmlspecialchars($member['name']); ?></h5>
+                        <p class="text-primary fw-bold mb-2"><?php echo htmlspecialchars($member['position']); ?></p>
+                        <div class="mb-2">
                             <?php if (!empty($member['importance'])): ?>
-                            <span class="badge bg-warning text-dark"><i class="fas fa-briefcase"></i> <?php echo htmlspecialchars($member['importance']); ?></span>
+                            <span class="badge bg-warning text-dark"><i class="fas fa-star"></i> <?php echo htmlspecialchars($member['importance']); ?></span>
                             <?php endif; ?>
-                        </p>
-                        <p class="text-muted small mb-0"><?php echo htmlspecialchars(substr($member['role'] ?? '', 0, 100)); ?></p>
+                        </div>
+                        <p class="text-muted small mb-3"><?php echo htmlspecialchars(substr($member['role'] ?? '', 0, 100)); ?></p>
+                        <!-- Réseaux Sociaux -->
+                        <div class="social-links pt-2 border-top">
+                            <?php if (!empty($member['linkedin'])): ?>
+                            <a href="<?php echo htmlspecialchars($member['linkedin']); ?>" target="_blank" class="me-2" title="LinkedIn">
+                                <i class="fab fa-linkedin text-info"></i>
+                            </a>
+                            <?php endif; ?>
+                            <?php if (!empty($member['twitter'])): ?>
+                            <a href="<?php echo htmlspecialchars($member['twitter']); ?>" target="_blank" class="me-2" title="Twitter">
+                                <i class="fab fa-twitter text-primary"></i>
+                            </a>
+                            <?php endif; ?>
+                            <?php if (!empty($member['facebook'])): ?>
+                            <a href="<?php echo htmlspecialchars($member['facebook']); ?>" target="_blank" class="me-2" title="Facebook">
+                                <i class="fab fa-facebook text-primary"></i>
+                            </a>
+                            <?php endif; ?>
+                            <?php if (!empty($member['instagram'])): ?>
+                            <a href="<?php echo htmlspecialchars($member['instagram']); ?>" target="_blank" class="me-2" title="Instagram">
+                                <i class="fab fa-instagram text-danger"></i>
+                            </a>
+                            <?php endif; ?>
+                            <?php if (!empty($member['website'])): ?>
+                            <a href="<?php echo htmlspecialchars($member['website']); ?>" target="_blank" title="Site Web">
+                                <i class="fas fa-globe text-success"></i>
+                            </a>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>
