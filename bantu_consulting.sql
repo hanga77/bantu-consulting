@@ -697,3 +697,11 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+-- ========================================
+-- Correction table contacts
+-- ========================================
+
+ALTER TABLE `contacts` ADD COLUMN `phone` VARCHAR(20) AFTER `email`;
+ALTER TABLE `contacts` ADD COLUMN `subject` VARCHAR(100) AFTER `phone`;
+ALTER TABLE `contacts` ADD COLUMN `status` VARCHAR(50) DEFAULT 'new' AFTER `message`;

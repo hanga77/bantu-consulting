@@ -5,7 +5,7 @@
 # Activer mod_rewrite
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /Bantu-consulting/
+    RewriteBase /Bantu-test2/
     
     # Bloquer l'accès direct aux fichiers sensibles
     RewriteRule ^config/ - [F,L]
@@ -139,7 +139,7 @@ Options -Indexes
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /Bantu-consulting/
+    RewriteBase /Bantu-test2/
     
     # Ne pas réécrire les fichiers existants
     RewriteCond %{REQUEST_FILENAME} !-f

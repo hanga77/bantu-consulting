@@ -1,337 +1,395 @@
 <?php
-// Récupérer les paramètres actuels
-$settings_stmt = $pdo->query("SELECT * FROM site_settings LIMIT 1");
-$settings = $settings_stmt->fetch();
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ?page=admin-login');
+    exit;
+}
+
+// Récupérer les paramètres
+$settings = getSiteSettings();
 ?>
 
 <div class="d-flex align-items-center justify-content-between mb-4">
     <h2><i class="fas fa-cog"></i> Paramètres du Site</h2>
 </div>
 
-<!-- Tabs pour organiser les paramètres -->
-<ul class="nav nav-tabs mb-4" role="tablist">
+<!-- TABS NAVIGATION -->
+<ul class="nav nav-tabs mb-4 border-bottom" role="tablist">
     <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button">
-            <i class="fas fa-globe"></i> Général
+        <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab">
+            <i class="fas fa-cog"></i> Général
         </button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="seo-tab" data-bs-toggle="tab" data-bs-target="#seo" type="button">
-            <i class="fas fa-search"></i> SEO
-        </button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button">
+        <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab">
             <i class="fas fa-phone"></i> Contact
         </button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="location-tab" data-bs-toggle="tab" data-bs-target="#location" type="button">
+        <button class="nav-link" id="seo-tab" data-bs-toggle="tab" data-bs-target="#seo" type="button" role="tab">
+            <i class="fas fa-search"></i> SEO
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="video-tab" data-bs-toggle="tab" data-bs-target="#video" type="button" role="tab">
+            <i class="fas fa-video"></i> Vidéo Présentation
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="location-tab" data-bs-toggle="tab" data-bs-target="#location" type="button" role="tab">
             <i class="fas fa-map-marker-alt"></i> Localisation
         </button>
     </li>
 </ul>
 
+<!-- TABS CONTENT -->
 <div class="tab-content">
-    <!-- TAB GÉNÉRAL -->
-    <div class="tab-pane fade show active" id="general" role="tabpanel">
-        <div class="card border-0 shadow-lg mb-4">
+    
+    <!-- TAB 1: GÉNÉRAL -->
+    <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
+        <div class="card border-0 shadow-lg">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="fas fa-info-circle"></i> Informations Générales</h5>
+                <h5 class="mb-0"><i class="fas fa-cog"></i> Paramètres Généraux</h5>
             </div>
             <div class="card-body">
-                <form method="POST" action="actions/save-settings.php" enctype="multipart/form-data">
-                    <div class="row">
+                <form method="POST" action="actions/save-settings.php">
+                    <input type="hidden" name="section" value="general">
+                    
+                    <div class="row mb-3">
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="site_name" class="form-label fw-bold">Nom du Site</label>
-                                <input type="text" class="form-control" id="site_name" name="site_name" value="<?php echo htmlspecialchars($settings['site_name'] ?? ''); ?>" required>
-                            </div>
+                            <label class="form-label fw-bold">Nom du site</label>
+                            <input type="text" class="form-control form-control-lg" name="site_name" value="<?php echo htmlspecialchars($settings['site_name'] ?? ''); ?>" required>
                         </div>
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="site_description" class="form-label fw-bold">Description</label>
-                                <textarea class="form-control" id="site_description" name="site_description" rows="3"><?php echo htmlspecialchars($settings['site_description'] ?? ''); ?></textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="site_logo" class="form-label fw-bold">Logo</label>
-                                <input type="file" class="form-control" id="site_logo" name="site_logo" accept="image/*">
-                                <small class="text-muted d-block mt-2">Format: PNG, JPG | Max: 2MB</small>
-                                
-                                <!-- Aperçu Logo -->
-                                <?php if (!empty($settings['site_logo'])): ?>
-                                <div class="mt-3">
-                                    <label class="form-label small">Logo actuel:</label><br>
-                                    <img src="uploads/<?php echo htmlspecialchars($settings['site_logo']); ?>" alt="Logo" style="max-height: 60px;">
-                                </div>
-                                <?php endif; ?>
-                                
-                                <div id="logo-preview" style="display: none; margin-top: 10px;">
-                                    <label class="form-label small">Nouvel logo:</label><br>
-                                    <img id="logo-img" src="" alt="Aperçu" style="max-height: 60px;">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="site_favicon" class="form-label fw-bold">Favicon</label>
-                                <input type="file" class="form-control" id="site_favicon" name="site_favicon" accept="image/*">
-                                <small class="text-muted d-block mt-2">Format: PNG, JPG | Max: 1MB | Idéal: 32x32px</small>
-                                
-                                <!-- Aperçu Favicon -->
-                                <?php if (!empty($settings['site_favicon'])): ?>
-                                <div class="mt-3">
-                                    <label class="form-label small">Favicon actuel:</label><br>
-                                    <img src="uploads/<?php echo htmlspecialchars($settings['site_favicon']); ?>" alt="Favicon" style="max-height: 32px;">
-                                </div>
-                                <?php endif; ?>
-                                
-                                <div id="favicon-preview" style="display: none; margin-top: 10px;">
-                                    <label class="form-label small">Nouveau favicon:</label><br>
-                                    <img id="favicon-img" src="" alt="Aperçu" style="max-height: 32px;">
-                                </div>
-                            </div>
+                            <label class="form-label fw-bold">Description</label>
+                            <input type="text" class="form-control form-control-lg" name="site_description" value="<?php echo htmlspecialchars($settings['site_description'] ?? ''); ?>">
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="site_keywords" class="form-label fw-bold">Mots-clés</label>
-                        <input type="text" class="form-control" id="site_keywords" name="site_keywords" value="<?php echo htmlspecialchars($settings['site_keywords'] ?? ''); ?>" placeholder="consultation, conseil, stratégie...">
+                        <label class="form-label fw-bold">Texte Footer</label>
+                        <input type="text" class="form-control" name="footer_text" value="<?php echo htmlspecialchars($settings['footer_text'] ?? ''); ?>">
                     </div>
 
-                    <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Enregistrer</button>
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="fas fa-save"></i> Enregistrer
+                    </button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- TAB SEO -->
-    <div class="tab-pane fade" id="seo" role="tabpanel">
-        <div class="card border-0 shadow-lg mb-4">
+    <!-- TAB 2: CONTACT -->
+    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+        <div class="card border-0 shadow-lg">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="fas fa-search"></i> Optimisation SEO</h5>
+                <h5 class="mb-0"><i class="fas fa-phone"></i> Informations Contact</h5>
             </div>
             <div class="card-body">
                 <form method="POST" action="actions/save-settings.php">
-                    <div class="mb-3">
-                        <label for="meta_title" class="form-label fw-bold">Titre Meta</label>
-                        <input type="text" class="form-control" id="meta_title" name="meta_title" value="<?php echo htmlspecialchars($settings['meta_title'] ?? ''); ?>" maxlength="60">
-                        <small class="text-muted d-block">Max 60 caractères (affiché dans Google)</small>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="meta_description" class="form-label fw-bold">Description Meta</label>
-                        <textarea class="form-control" id="meta_description" name="meta_description" rows="3" maxlength="160"><?php echo htmlspecialchars($settings['meta_description'] ?? ''); ?></textarea>
-                        <small class="text-muted d-block">Max 160 caractères (affiché dans Google)</small>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="footer_text" class="form-label fw-bold">Texte Footer</label>
-                        <textarea class="form-control" id="footer_text" name="footer_text" rows="3"><?php echo htmlspecialchars($settings['footer_text'] ?? ''); ?></textarea>
-                    </div>
-
-                    <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Enregistrer</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- TAB CONTACT -->
-    <div class="tab-pane fade" id="contact" role="tabpanel">
-        <div class="card border-0 shadow-lg mb-4">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="fas fa-phone"></i> Informations de Contact</h5>
-            </div>
-            <div class="card-body">
-                <form method="POST" action="actions/save-settings.php">
-                    <div class="row">
+                    <input type="hidden" name="section" value="contact">
+                    
+                    <div class="row mb-3">
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="contact_email" class="form-label fw-bold">Email Principal</label>
-                                <input type="email" class="form-control" id="contact_email" name="contact_email" value="<?php echo htmlspecialchars($settings['contact_email'] ?? ''); ?>" required>
-                            </div>
+                            <label class="form-label fw-bold">Email Principal</label>
+                            <input type="email" class="form-control form-control-lg" name="contact_email" value="<?php echo htmlspecialchars($settings['contact_email'] ?? ''); ?>">
                         </div>
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="contact_email2" class="form-label fw-bold">Email Secondaire</label>
-                                <input type="email" class="form-control" id="contact_email2" name="contact_email2" value="<?php echo htmlspecialchars($settings['contact_email2'] ?? ''); ?>">
-                            </div>
+                            <label class="form-label fw-bold">Email Secondaire</label>
+                            <input type="email" class="form-control form-control-lg" name="contact_email2" value="<?php echo htmlspecialchars($settings['contact_email2'] ?? ''); ?>">
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row mb-3">
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="phone" class="form-label fw-bold">Téléphone</label>
-                                <input type="tel" class="form-control" id="phone" name="phone" value="<?php echo htmlspecialchars($settings['phone'] ?? ''); ?>">
-                            </div>
+                            <label class="form-label fw-bold">Téléphone</label>
+                            <input type="tel" class="form-control form-control-lg" name="phone" value="<?php echo htmlspecialchars($settings['phone'] ?? ''); ?>">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Adresse</label>
+                            <input type="text" class="form-control form-control-lg" name="address" value="<?php echo htmlspecialchars($settings['address'] ?? ''); ?>">
                         </div>
                     </div>
 
                     <!-- Réseaux Sociaux -->
-                    <div class="card border-0 bg-light mb-3">
-                        <div class="card-header bg-white">
-                            <h6 class="mb-0"><i class="fas fa-share-alt"></i> Réseaux Sociaux</h6>
+                    <hr>
+                    <h6 class="fw-bold mb-3"><i class="fas fa-share-alt"></i> Réseaux Sociaux</h6>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label"><i class="fab fa-facebook text-primary"></i> Facebook</label>
+                            <input type="url" class="form-control" name="facebook_url" value="<?php echo htmlspecialchars($settings['facebook_url'] ?? ''); ?>" placeholder="https://facebook.com/...">
                         </div>
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label for="facebook_url" class="form-label"><i class="fab fa-facebook text-primary"></i> Facebook</label>
-                                    <input type="url" class="form-control" id="facebook_url" name="facebook_url" value="<?php echo htmlspecialchars($settings['facebook_url'] ?? ''); ?>" placeholder="https://facebook.com/...">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="twitter_url" class="form-label"><i class="fab fa-twitter text-info"></i> Twitter</label>
-                                    <input type="url" class="form-control" id="twitter_url" name="twitter_url" value="<?php echo htmlspecialchars($settings['twitter_url'] ?? ''); ?>" placeholder="https://twitter.com/...">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="linkedin_url" class="form-label"><i class="fab fa-linkedin text-primary"></i> LinkedIn</label>
-                                    <input type="url" class="form-control" id="linkedin_url" name="linkedin_url" value="<?php echo htmlspecialchars($settings['linkedin_url'] ?? ''); ?>" placeholder="https://linkedin.com/...">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="instagram_url" class="form-label"><i class="fab fa-instagram text-danger"></i> Instagram</label>
-                                    <input type="url" class="form-control" id="instagram_url" name="instagram_url" value="<?php echo htmlspecialchars($settings['instagram_url'] ?? ''); ?>" placeholder="https://instagram.com/...">
-                                </div>
-                            </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><i class="fab fa-twitter text-info"></i> Twitter</label>
+                            <input type="url" class="form-control" name="twitter_url" value="<?php echo htmlspecialchars($settings['twitter_url'] ?? ''); ?>" placeholder="https://twitter.com/...">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><i class="fab fa-linkedin text-primary"></i> LinkedIn</label>
+                            <input type="url" class="form-control" name="linkedin_url" value="<?php echo htmlspecialchars($settings['linkedin_url'] ?? ''); ?>" placeholder="https://linkedin.com/...">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><i class="fab fa-instagram text-danger"></i> Instagram</label>
+                            <input type="url" class="form-control" name="instagram_url" value="<?php echo htmlspecialchars($settings['instagram_url'] ?? ''); ?>" placeholder="https://instagram.com/...">
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Enregistrer</button>
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="fas fa-save"></i> Enregistrer
+                    </button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- TAB LOCALISATION -->
-    <div class="tab-pane fade" id="location" role="tabpanel">
-        <div class="card border-0 shadow-lg mb-4">
+    <!-- TAB 3: SEO -->
+    <div class="tab-pane fade" id="seo" role="tabpanel" aria-labelledby="seo-tab">
+        <div class="card border-0 shadow-lg">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="fas fa-map-marker-alt"></i> Localisation & Coordonnées GPS</h5>
+                <h5 class="mb-0"><i class="fas fa-search"></i> SEO et Meta Tags</h5>
             </div>
             <div class="card-body">
                 <form method="POST" action="actions/save-settings.php">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="address" class="form-label fw-bold">Adresse Complète</label>
-                                <textarea class="form-control" id="address" name="address" rows="3" placeholder="Ex: Kinshasa, République Démocratique du Congo"><?php echo htmlspecialchars($settings['address'] ?? ''); ?></textarea>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="latitude" class="form-label fw-bold">Latitude</label>
-                                <input type="text" class="form-control" id="latitude" name="latitude" placeholder="Ex: 4.0511" value="<?php echo htmlspecialchars($settings['latitude'] ?? '4.0511'); ?>">
-                                <small class="text-muted">Format décimal: -90 à +90</small>
-                            </div>
-                            <div class="mb-3">
-                                <label for="longitude" class="form-label fw-bold">Longitude</label>
-                                <input type="text" class="form-control" id="longitude" name="longitude" placeholder="Ex: 9.7679" value="<?php echo htmlspecialchars($settings['longitude'] ?? '9.7679'); ?>">
-                                <small class="text-muted">Format décimal: -180 à +180</small>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="alert alert-info mt-3">
-                        <i class="fas fa-lightbulb"></i>
-                        <strong>Comment trouver les coordonnées GPS ?</strong><br>
-                        <small>
-                            1. Allez sur <a href="https://www.google.com/maps" target="_blank">Google Maps</a><br>
-                            2. Cherchez votre adresse<br>
-                            3. Clic droit sur le marqueur → Copier les coordonnées<br>
-                            4. Format: Latitude,Longitude (ex: 4.0511, 9.7679)
-                        </small>
+                    <input type="hidden" name="section" value="seo">
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Meta Title (max 60 caractères)</label>
+                        <input type="text" class="form-control form-control-lg" name="meta_title" value="<?php echo htmlspecialchars($settings['meta_title'] ?? ''); ?>" maxlength="60" placeholder="Max 60 caractères">
+                        <small class="text-muted d-block">Affiché dans les résultats Google</small>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Aperçu de la Carte</label>
-                        <div id="map-preview" style="height: 300px; border-radius: 8px; border: 2px solid #dee2e6;"></div>
+                        <label class="form-label fw-bold">Meta Description (max 160 caractères)</label>
+                        <textarea class="form-control" name="meta_description" rows="3" maxlength="160" placeholder="Max 160 caractères"><?php echo htmlspecialchars($settings['meta_description'] ?? ''); ?></textarea>
+                        <small class="text-muted d-block">Affiché sous le titre dans Google</small>
                     </div>
 
-                    <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Enregistrer</button>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Mots-clés</label>
+                        <input type="text" class="form-control" name="site_keywords" value="<?php echo htmlspecialchars($settings['site_keywords'] ?? ''); ?>" placeholder="Séparés par des virgules">
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="fas fa-save"></i> Enregistrer
+                    </button>
                 </form>
             </div>
         </div>
     </div>
+
+    <!-- TAB 4: VIDÉO -->
+    <div class="tab-pane fade" id="video" role="tabpanel" aria-labelledby="video-tab">
+        <div class="card border-0 shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-film"></i> Vidéo de Présentation</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <!-- Vidéo actuelle -->
+                        <div class="mb-4">
+                            <h6 class="fw-bold mb-3"><i class="fas fa-check-circle text-success"></i> Vidéo actuelle</h6>
+                            <?php if (!empty($settings['presentation_video'])): ?>
+                            <div class="mb-3">
+                                <video width="100%" height="auto" controls style="max-height: 400px; border-radius: 8px; border: 2px solid #1e40af;">
+                                    <source src="<?php echo htmlspecialchars($settings['presentation_video']); ?>" type="video/mp4">
+                                    Votre navigateur ne supporte pas les vidéos HTML5.
+                                </video>
+                            </div>
+                            <p class="text-muted small">
+                                <i class="fas fa-info-circle"></i> 
+                                Dimensions: <strong>1920x1080px</strong> | Format: <strong>16:9</strong>
+                            </p>
+                            <?php else: ?>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i> Aucune vidéo uploadée
+                            </div>
+                            <?php endif; ?>
+                        </div>
+
+                        <hr>
+
+                        <!-- Formulaire upload -->
+                        <h6 class="fw-bold mb-3"><i class="fas fa-upload"></i> Télécharger une nouvelle vidéo</h6>
+                        <form method="POST" action="actions/save-settings-video.php" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="presentation_video" class="form-label fw-bold">Fichier vidéo *</label>
+                                <input type="file" class="form-control form-control-lg" id="presentation_video" name="presentation_video" accept="video/mp4,video/webm" required>
+                                <small class="text-muted d-block mt-2">
+                                    Format: MP4 ou WebM | Taille max: 100 MB<br>
+                                    Dimensions recommandées: 1920x1080px (16:9)
+                                </small>
+                            </div>
+
+                            <!-- Aperçu vidéo -->
+                            <div id="video-preview-settings" style="display: none;" class="mb-3">
+                                <label class="form-label fw-bold">Aperçu:</label>
+                                <video id="preview-video-settings" width="100%" height="auto" controls style="max-height: 300px; border-radius: 8px; border: 2px solid #1e40af;"></video>
+                                <small class="text-muted d-block mt-2" id="video-info-settings"></small>
+                            </div>
+
+                            <div class="alert alert-warning">
+                                <strong><i class="fas fa-lightbulb"></i> Conseils:</strong>
+                                <ul class="mb-0 mt-2">
+                                    <li>Format recommandé: <strong>MP4 (H.264)</strong></li>
+                                    <li>Résolution: <strong>1920x1080px (16:9)</strong></li>
+                                    <li>La vidéo s'affichera en arrière-plan sur la page d'accueil</li>
+                                </ul>
+                            </div>
+
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-save"></i> Enregistrer
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card border-0 bg-light">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-3"><i class="fas fa-cogs"></i> Paramètres vidéo</h6>
+                                
+                                <div class="mb-3">
+                                    <small class="text-muted">
+                                        <strong>Aspect ratio:</strong> 16:9<br>
+                                        <strong>Résolution:</strong> 1920 x 1080<br>
+                                        <strong>FPS:</strong> 30 fps<br>
+                                        <strong>Codec vidéo:</strong> H.264<br>
+                                        <strong>Codec audio:</strong> AAC 128k
+                                    </small>
+                                </div>
+
+                                <hr>
+
+                                <h6 class="fw-bold mb-3"><i class="fas fa-info-circle"></i> Info</h6>
+                                <small class="text-muted">
+                                    La vidéo sera automatiquement optimisée pour le web et les appareils mobiles.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 5: LOCALISATION -->
+    <div class="tab-pane fade" id="location" role="tabpanel" aria-labelledby="location-tab">
+        <div class="card border-0 shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-map-marker-alt"></i> Localisation GPS</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="actions/save-settings.php">
+                    <input type="hidden" name="section" value="location">
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Latitude</label>
+                            <input type="text" class="form-control form-control-lg" name="latitude" value="<?php echo htmlspecialchars($settings['latitude'] ?? '4.0511'); ?>" placeholder="4.0511">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Longitude</label>
+                            <input type="text" class="form-control form-control-lg" name="longitude" value="<?php echo htmlspecialchars($settings['longitude'] ?? '9.7679'); ?>" placeholder="9.7679">
+                        </div>
+                    </div>
+
+                    <!-- Carte Leaflet -->
+                    <div id="map" style="height: 400px; border-radius: 8px; border: 2px solid #1e40af; margin-bottom: 15px;"></div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-lightbulb"></i>
+                        <strong>Comment obtenir les coordonnées:</strong><br>
+                        1. Allez sur <a href="https://www.google.com/maps" target="_blank">Google Maps</a><br>
+                        2. Cherchez votre adresse<br>
+                        3. Clic-droit → Les coordonnées s'affichent en haut
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="fas fa-save"></i> Enregistrer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </div>
 
-<!-- Scripts pour aperçus -->
+<!-- SCRIPTS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
 <script>
-// Aperçu Logo
-document.getElementById('site_logo')?.addEventListener('change', function(e) {
+// Aperçu vidéo pour settings
+document.getElementById('presentation_video').addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (file) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            document.getElementById('logo-img').src = event.target.result;
-            document.getElementById('logo-preview').style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
-// Aperçu Favicon
-document.getElementById('site_favicon')?.addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            document.getElementById('favicon-img').src = event.target.result;
-            document.getElementById('favicon-preview').style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
-// Aperçu Carte
-document.addEventListener('DOMContentLoaded', function() {
-    const latInput = document.getElementById('latitude');
-    const lonInput = document.getElementById('longitude');
-    
-    function updateMap() {
-        const lat = parseFloat(latInput?.value) || 4.0511;
-        const lon = parseFloat(lonInput?.value) || 9.7679;
-        
-        if (window.mapPreview) {
-            window.mapPreview.remove();
+        // Valider la taille (100MB)
+        const maxSize = 100 * 1024 * 1024;
+        if (file.size > maxSize) {
+            alert('Fichier trop volumineux. Maximum: 100MB. Votre fichier: ' + (file.size / 1024 / 1024).toFixed(2) + 'MB');
+            e.target.value = '';
+            document.getElementById('video-preview-settings').style.display = 'none';
+            return;
         }
         
-        // Charger Leaflet
-        if (typeof L === 'undefined') {
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
-            document.head.appendChild(link);
+        // Valider le type
+        const allowedTypes = ['video/mp4', 'video/webm'];
+        if (!allowedTypes.includes(file.type)) {
+            alert('Format non autorisé. Utilisez MP4 ou WebM. Type détecté: ' + file.type);
+            e.target.value = '';
+            document.getElementById('video-preview-settings').style.display = 'none';
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const videoElement = document.getElementById('preview-video-settings');
+            videoElement.src = event.target.result;
             
-            const script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
-            script.onload = function() {
-                createMap(lat, lon);
-            };
-            document.head.appendChild(script);
-        } else {
-            createMap(lat, lon);
-        }
+            const info = document.getElementById('video-info-settings');
+            info.innerHTML = `<i class="fas fa-file-video"></i> ${file.name} | Taille: ${(file.size / 1024 / 1024).toFixed(2)}MB`;
+            
+            document.getElementById('video-preview-settings').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        document.getElementById('video-preview-settings').style.display = 'none';
     }
-    
-    function createMap(lat, lon) {
-        window.mapPreview = L.map('map-preview').setView([lat, lon], 14);
-        
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors',
-            maxZoom: 19
-        }).addTo(window.mapPreview);
-        
-        L.marker([lat, lon]).addTo(window.mapPreview).bindPopup('Votre localisation').openPopup();
-        
-        setTimeout(() => window.mapPreview.invalidateSize(), 100);
+});
+
+// Validation du formulaire avant envoi
+document.querySelector('form[action="actions/save-settings-video.php"]').addEventListener('submit', function(e) {
+    const fileInput = document.getElementById('presentation_video');
+    if (!fileInput.files || fileInput.files.length === 0) {
+        e.preventDefault();
+        alert('Veuillez sélectionner une vidéo');
+        return false;
     }
+});
+
+// Carte Leaflet
+document.addEventListener('DOMContentLoaded', function() {
+    const lat = parseFloat(document.querySelector('input[name="latitude"]').value) || 4.0511;
+    const lon = parseFloat(document.querySelector('input[name="longitude"]').value) || 9.7679;
     
-    updateMap();
-    latInput?.addEventListener('change', updateMap);
-    lonInput?.addEventListener('change', updateMap);
+    const map = L.map('map').setView([lat, lon], 13);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+    }).addTo(map);
+    
+    let marker = L.marker([lat, lon]).addTo(map).bindPopup('Ma localisation').openPopup();
+    
+    map.on('click', function(e) {
+        const newLat = e.latlng.lat.toFixed(4);
+        const newLon = e.latlng.lng.toFixed(4);
+        
+        document.querySelector('input[name="latitude"]').value = newLat;
+        document.querySelector('input[name="longitude"]').value = newLon;
+        
+        map.removeLayer(marker);
+        marker = L.marker([newLat, newLon]).addTo(map).bindPopup(`${newLat}, ${newLon}`).openPopup();
+        map.setView([newLat, newLon], 13);
+    });
 });
 </script>

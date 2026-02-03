@@ -7,13 +7,12 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$id = $_GET['id'] ?? 0;
+$id = intval($_GET['id'] ?? 0);
 
-try {
-    $pdo->prepare("DELETE FROM contacts WHERE id=?")->execute([$id]);
-    $_SESSION['success'] = 'Message supprimé avec succès';
-} catch (PDOException $e) {
-    $_SESSION['error'] = 'Erreur lors de la suppression';
+if ($id > 0) {
+    $stmt = $pdo->prepare("DELETE FROM contacts WHERE id = ?");
+    $stmt->execute([$id]);
+    $_SESSION['success'] = 'Message supprimé';
 }
 
 header('Location: ../?page=admin-dashboard&section=contacts');

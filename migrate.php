@@ -142,6 +142,36 @@ try {
         echo '<p style="color: blue;">✓ Colonnes de traitement d\'image existent déjà dans projects</p>';
     }
 
+    // Migration 10: Ajouter la colonne status à contacts
+    $result = $pdo->query("SHOW COLUMNS FROM contacts LIKE 'status'");
+    if ($result->rowCount() === 0) {
+        echo '<p>Ajout de la colonne <strong>status</strong> à contacts...</p>';
+        $pdo->exec("ALTER TABLE contacts ADD COLUMN status VARCHAR(50) DEFAULT 'new' AFTER message");
+        echo '<p style="color: green;">✅ Colonne status ajoutée à contacts</p>';
+    } else {
+        echo '<p style="color: blue;">✓ Colonne status existe déjà dans contacts</p>';
+    }
+
+    // Migration 11: Ajouter la colonne phone à contacts
+    $result = $pdo->query("SHOW COLUMNS FROM contacts LIKE 'phone'");
+    if ($result->rowCount() === 0) {
+        echo '<p>Ajout de la colonne <strong>phone</strong> à contacts...</p>';
+        $pdo->exec("ALTER TABLE contacts ADD COLUMN phone VARCHAR(20) AFTER email");
+        echo '<p style="color: green;">✅ Colonne phone ajoutée à contacts</p>';
+    } else {
+        echo '<p style="color: blue;">✓ Colonne phone existe déjà dans contacts</p>';
+    }
+
+    // Migration 12: Ajouter la colonne subject à contacts
+    $result = $pdo->query("SHOW COLUMNS FROM contacts LIKE 'subject'");
+    if ($result->rowCount() === 0) {
+        echo '<p>Ajout de la colonne <strong>subject</strong> à contacts...</p>';
+        $pdo->exec("ALTER TABLE contacts ADD COLUMN subject VARCHAR(100) AFTER phone");
+        echo '<p style="color: green;">✅ Colonne subject ajoutée à contacts</p>';
+    } else {
+        echo '<p style="color: blue;">✓ Colonne subject existe déjà dans contacts</p>';
+    }
+
     echo '<hr>';
     echo '<p style="color: green; font-size: 18px;"><strong>✅ Migration terminée avec succès !</strong></p>';
     echo '<p><a href="index.php" style="padding: 10px 20px; background: #1a5490; color: white; text-decoration: none; border-radius: 5px;">Retour au site</a></p>';
