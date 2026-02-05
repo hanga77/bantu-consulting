@@ -69,7 +69,8 @@ $current_lang = $_SESSION['lang'] ?? 'fr';
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/style.css">
     
-    
+    <!-- Toast Notifications -->
+    <script src="assets/js/toast.js"></script>
     <style>
         :root {
             --primary: #1e40af;

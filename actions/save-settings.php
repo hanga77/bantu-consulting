@@ -30,8 +30,8 @@ try {
             throw new Exception("Format vidéo non autorisé. Utilisez MP4 ou WebM.");
         }
         
-        if ($file['size'] > 100 * 1024 * 1024) {
-            throw new Exception("Fichier vidéo trop volumineux (max 100MB).");
+        if ($file['size'] > 200 * 1024 * 1024) {
+            throw new Exception("Fichier vidéo trop volumineux (max 200MB).");
         }
         
         if ($file['error'] !== UPLOAD_ERR_OK) {
@@ -46,9 +46,6 @@ try {
         }
         
         $video_path = 'uploads/videos/' . $filename;
-        
-        $stmt = $pdo->prepare("UPDATE settings SET setting_value = ? WHERE setting_key = ?");
-        $stmt->execute([$video_path, 'presentation_video']);
         
         $stmt = $pdo->prepare("UPDATE site_settings SET presentation_video = ? WHERE id = 1");
         $stmt->execute([$video_path]);
@@ -78,12 +75,6 @@ try {
         $stmt = $pdo->prepare("UPDATE site_settings SET latitude = ?, longitude = ? WHERE id = 1");
         $stmt->execute([$latitude, $longitude]);
         
-        $stmt = $pdo->prepare("UPDATE settings SET setting_value = ? WHERE setting_key = ?");
-        $stmt->execute([$latitude, 'latitude']);
-        
-        $stmt = $pdo->prepare("UPDATE settings SET setting_value = ? WHERE setting_key = ?");
-        $stmt->execute([$longitude, 'longitude']);
-        
         $_SESSION['success'] = 'Localisation mise à jour avec succès !';
         
     } else {
@@ -97,8 +88,8 @@ try {
         foreach ($text_fields as $field) {
             if (isset($_POST[$field])) {
                 $value = trim($_POST[$field]);
-                $stmt = $pdo->prepare("UPDATE settings SET setting_value = ? WHERE setting_key = ?");
-                $stmt->execute([$value, $field]);
+                $stmt = $pdo->prepare("UPDATE site_settings SET " . $field . " = ? WHERE id = 1");
+                $stmt->execute([$value]);
             }
         }
         

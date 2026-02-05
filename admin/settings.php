@@ -215,7 +215,7 @@ $settings = getSiteSettings();
                                 <label for="presentation_video" class="form-label fw-bold">Fichier vidéo *</label>
                                 <input type="file" class="form-control form-control-lg" id="presentation_video" name="presentation_video" accept="video/mp4,video/webm" required>
                                 <small class="text-muted d-block mt-2">
-                                    Format: MP4 ou WebM | Taille max: 100 MB<br>
+                                    Format: MP4 ou WebM | Taille max: 200 MB<br>
                                     Dimensions recommandées: 1920x1080px (16:9)
                                 </small>
                             </div>
@@ -322,11 +322,10 @@ $settings = getSiteSettings();
 document.getElementById('presentation_video').addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (file) {
-        // Valider la taille (100MB)
-        const maxSize = 100 * 1024 * 1024;
+        // Valider la taille (200MB)
+        const maxSize = 200 * 1024 * 1024;
         if (file.size > maxSize) {
-            alert('Fichier trop volumineux. Maximum: 100MB. Votre fichier: ' + (file.size / 1024 / 1024).toFixed(2) + 'MB');
-            e.target.value = '';
+                    Toast.error('Fichier trop volumineux. Maximum: 200MB. Votre fichier: ' + (file.size / 1024 / 1024).toFixed(2) + 'MB');
             document.getElementById('video-preview-settings').style.display = 'none';
             return;
         }
@@ -334,7 +333,7 @@ document.getElementById('presentation_video').addEventListener('change', functio
         // Valider le type
         const allowedTypes = ['video/mp4', 'video/webm'];
         if (!allowedTypes.includes(file.type)) {
-            alert('Format non autorisé. Utilisez MP4 ou WebM. Type détecté: ' + file.type);
+            Toast.error('Format non autorisé. Utilisez MP4 ou WebM. Type détecté: ' + file.type);
             e.target.value = '';
             document.getElementById('video-preview-settings').style.display = 'none';
             return;
@@ -346,23 +345,13 @@ document.getElementById('presentation_video').addEventListener('change', functio
             videoElement.src = event.target.result;
             
             const info = document.getElementById('video-info-settings');
-            info.innerHTML = `<i class="fas fa-file-video"></i> ${file.name} | Taille: ${(file.size / 1024 / 1024).toFixed(2)}MB`;
+            info.innerHTML = `📹 ${file.name} | Taille: ${(file.size / 1024 / 1024).toFixed(2)}MB`;
             
             document.getElementById('video-preview-settings').style.display = 'block';
         };
         reader.readAsDataURL(file);
     } else {
         document.getElementById('video-preview-settings').style.display = 'none';
-    }
-});
-
-// Validation du formulaire avant envoi
-document.querySelector('form[action="actions/save-settings-video.php"]').addEventListener('submit', function(e) {
-    const fileInput = document.getElementById('presentation_video');
-    if (!fileInput.files || fileInput.files.length === 0) {
-        e.preventDefault();
-        alert('Veuillez sélectionner une vidéo');
-        return false;
     }
 });
 

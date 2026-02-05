@@ -145,7 +145,7 @@ function shareOnSocial(platform, url = window.location.href) {
 // Copy to Clipboard
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
-        alert('Copié dans le presse-papiers !');
+        Toast.copy();
     }).catch(err => {
         console.error('Erreur:', err);
     });

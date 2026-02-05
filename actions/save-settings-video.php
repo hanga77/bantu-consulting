@@ -19,65 +19,61 @@ try {
     // Vérifier les erreurs d'upload
     if ($file['error'] !== UPLOAD_ERR_OK) {
         $errors = [
-            UPLOAD_ERR_INI_SIZE => 'Fichier trop volumineux (limite serveur php.ini)',
+            UPLOAD_ERR_INI_SIZE => 'Fichier trop volumineux (limite serveur)',
             UPLOAD_ERR_FORM_SIZE => 'Fichier trop volumineux (limite formulaire)',
-            UPLOAD_ERR_PARTIAL => 'Téléchargement partiel - Réessayez',
+            UPLOAD_ERR_PARTIAL => 'Téléchargement partiel',
             UPLOAD_ERR_NO_TMP_DIR => 'Dossier temporaire manquant',
-            UPLOAD_ERR_CANT_WRITE => 'Erreur d\'écriture sur le disque'
+            UPLOAD_ERR_CANT_WRITE => 'Erreur d\'écriture disque'
         ];
-        throw new Exception($errors[$file['error']] ?? 'Erreur lors du téléchargement');
+        throw new Exception($errors[$file['error']] ?? 'Erreur upload');
     }
     
-    // Vérifier que le fichier a un nom
-    if (empty($file['name'])) {
-        throw new Exception("Nom de fichier invalide");
-    }
+    // Validations
+    if (empty($file['name'])) throw new Exception("Nom invalide");
+    if ($file['size'] <= 0) throw new Exception("Fichier vide");
     
-    // Vérifier que la taille est supérieure à 0
-    if ($file['size'] <= 0) {
-        throw new Exception("Fichier vide ou taille incorrecte");
-    }
-    
-    // Vérifier le type MIME
     $allowed_types = ['video/mp4', 'video/webm', 'video/quicktime'];
-    $file_type = strtolower($file['type']);
-    
-    if (!in_array($file_type, $allowed_types)) {
-        throw new Exception("Format vidéo non autorisé. Utilisez MP4 ou WebM. Type détecté: " . $file_type);
+    if (!in_array($file['type'], $allowed_types)) {
+        throw new Exception("Format non autorisé: " . $file['type']);
     }
     
-    // Vérifier la taille (max 100MB)
-    $max_size = 100 * 1024 * 1024;
+    $max_size = 200 * 1024 * 1024;
     if ($file['size'] > $max_size) {
-        $size_mb = round($file['size'] / 1024 / 1024, 2);
-        throw new Exception("Fichier trop volumineux ({$size_mb}MB). Maximum: 100MB");
+        throw new Exception("Fichier > 200MB");
     }
     
-    // Créer le dossier s'il n'existe pas
+    // Créer le dossier
     $uploadDir = __DIR__ . '/../uploads/videos/';
     if (!is_dir($uploadDir)) {
-        @mkdir($uploadDir, 0755, true);
+        if (!mkdir($uploadDir, 0755, true)) {
+            throw new Exception("Impossible créer dossier");
+        }
     }
     
-    // Générer un nom unique
+    // Générer nom unique
     $filename = 'video_' . time() . '_' . rand(1000, 9999) . '.mp4';
     $filepath = $uploadDir . $filename;
     
-    // Déplacer le fichier
+    // Déplacer fichier
     if (!move_uploaded_file($file['tmp_name'], $filepath)) {
-        throw new Exception("Erreur lors du téléchargement du fichier");
+        throw new Exception("Erreur déplacement fichier");
     }
     
     $video_path = 'uploads/videos/' . $filename;
     
-    // Mettre à jour la base de données
+    // Mettre à jour BD
     $stmt = $pdo->prepare("UPDATE site_settings SET presentation_video = ? WHERE id = 1");
-    $stmt->execute([$video_path]);
+    $result = $stmt->execute([$video_path]);
     
-    $_SESSION['success'] = 'Vidéo mise à jour avec succès !';
+    if (!$result) {
+        throw new Exception("Erreur mise à jour BD");
+    }
+    
+    $_SESSION['success'] = 'Vidéo enregistrée !';
     
 } catch (Exception $e) {
     $_SESSION['error'] = 'Erreur: ' . $e->getMessage();
+    error_log("Upload video: " . $e->getMessage());
 }
 
 header('Location: ../?page=admin-dashboard&section=settings');

@@ -90,10 +90,10 @@ $next_service = $current_index < count($all_services) - 1 ? $all_services[$curre
                                     <strong><?php echo htmlspecialchars($file['file_name']); ?></strong>
                                     <br>
                                     <?php if (!empty($service['updated_at'])): ?>
-    <p class="text-muted">
-        Mis à jour le <?= date('d/m/Y', strtotime($service['updated_at'])) ?>
-    </p>
-<?php endif; ?>
+                                        <p class="text-muted">
+                                            Mis à jour le <?= date('d/m/Y', strtotime($service['updated_at'])) ?>
+                                        </p>
+                                    <?php endif; ?>
 
                                 </div>
                                 <i class="fas fa-download text-primary"></i>

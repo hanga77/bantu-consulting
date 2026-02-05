@@ -46,7 +46,7 @@ $settings = getSiteSettings();
     </div>
 </section>
 
-<!-- VIDÉO DE PRÉSENTATION -->
+<!-- VIDÉO DE PRÉSENTATION - VERSION FINALE CORRIGÉE -->
 <section class="py-5 bg-white">
     <div class="container">
         <div class="text-center mb-5" data-aos="fade-up">
@@ -59,8 +59,10 @@ $settings = getSiteSettings();
                 <div class="card border-0 shadow-lg overflow-hidden">
                     <div class="ratio ratio-16x9">
                         <?php 
-                        $video_url = $settings['presentation_video'] ?? 'https://www.youtube.com/embed/dQw4w9WgXcQ';
-                        if (strpos($video_url, 'youtube.com') !== false || strpos($video_url, 'youtu.be') !== false): 
+                        $video_url = $settings['presentation_video'] ?? '';
+                        
+                        // Vérifier si c'est une vidéo YouTube
+                        if (!empty($video_url) && (strpos($video_url, 'youtube.com') !== false || strpos($video_url, 'youtu.be') !== false)): 
                         ?>
                             <!-- YouTube Video -->
                             <iframe 
@@ -70,12 +72,23 @@ $settings = getSiteSettings();
                                 loading="lazy" 
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share">
                             </iframe>
-                        <?php else: ?>
+                        <?php elseif (!empty($video_url)): ?>
                             <!-- Local Video -->
-                            <video controls style="width: 100%; height: 100%; object-fit: cover;">
+                            <video controls style="width: 100%; height: 100%; object-fit: cover;" controlsList="nodownload">
+                                <!-- Le chemin est déjà correct depuis la racine : uploads/videos/xxx.mp4 -->
                                 <source src="<?php echo htmlspecialchars($video_url); ?>" type="video/mp4">
+                                <source src="<?php echo htmlspecialchars($video_url); ?>" type="video/webm">
                                 Votre navigateur ne supporte pas les vidéos HTML5.
                             </video>
+                        <?php else: ?>
+                            <!-- Placeholder si aucune vidéo -->
+                            <div class="d-flex align-items-center justify-content-center bg-light h-100">
+                                <div class="text-center text-muted p-5">
+                                    <i class="fas fa-video fa-5x mb-3" style="color: #ccc;"></i>
+                                    <h4>Aucune vidéo de présentation</h4>
+                                    <p>Ajoutez une vidéo dans les paramètres du site</p>
+                                </div>
+                            </div>
                         <?php endif; ?>
                     </div>
                 </div>

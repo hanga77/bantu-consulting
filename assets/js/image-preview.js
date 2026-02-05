@@ -12,13 +12,13 @@ function initImagePreview() {
             
             // Vérifier si c'est bien une image
             if (!file.type.startsWith('image/')) {
-                alert('Veuillez sélectionner une image valide');
+                Toast.error('Veuillez sélectionner une image valide');
                 return;
             }
             
             // Vérifier la taille (max 5MB)
             if (file.size > 5 * 1024 * 1024) {
-                alert('L\'image est trop volumineuse (max 5MB)');
+                Toast.error('L\'image est trop volumineuse (max 5MB)');
                 this.value = '';
                 return;
             }
