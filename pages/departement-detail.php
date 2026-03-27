@@ -18,6 +18,13 @@ $members = $stmt->fetchAll();
 ?>
 
 <div class="container py-5">
+    <nav aria-label="Fil d'ariane" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="?page=accueil">Accueil</a></li>
+            <li class="breadcrumb-item"><a href="?page=equipes">Équipes</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><?php echo htmlspecialchars($department['name']); ?></li>
+        </ol>
+    </nav>
     <a href="?page=equipes" class="btn btn-secondary mb-4"><i class="fas fa-arrow-left"></i> Retour aux équipes</a>
     
     <!-- En-tête -->

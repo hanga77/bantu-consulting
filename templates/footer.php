@@ -5,7 +5,7 @@ $services = getFooterServices();
 </main>
 
 <!-- Scroll to Top Button -->
-<button id="scrollToTop" type="button" title="Retour au haut">
+<button id="scrollToTop" type="button" title="Retour au haut" aria-label="Retour en haut de la page">
     <i class="fas fa-arrow-up"></i>
 </button>
 
@@ -163,9 +163,15 @@ $services = getFooterServices();
 </footer>
 
 <!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"
+        integrity="sha384-jN3Qe7xtdnQxdyZWXD9gn2Z4oRyiFuU03xQATriSicCq2SKDikN9UEJMCx+9nsJM"
+        crossorigin="anonymous"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"
+        integrity="sha384-wziAfh6b/qT+3LrqebF9WeK4+J5sehS6FA10J1t3a866kJ/fvU5UwofWnQyzLtwu"
+        crossorigin="anonymous"></script>
 <script>
     AOS.init({
         duration: 1000,

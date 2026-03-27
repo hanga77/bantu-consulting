@@ -43,7 +43,8 @@ $file = "pages/{$page}.php";
 if (file_exists($file)) {
     include $file;
 } else {
-    include "pages/accueil.php";
+    http_response_code(404);
+    include "pages/404.php";
 }
 
 // Vider les messages de session après affichage

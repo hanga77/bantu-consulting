@@ -25,6 +25,13 @@ $next_service = $current_index < count($all_services) - 1 ? $all_services[$curre
 ?>
 
 <div class="container py-5">
+    <nav aria-label="Fil d'ariane" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="?page=accueil">Accueil</a></li>
+            <li class="breadcrumb-item"><a href="?page=services">Services</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><?php echo htmlspecialchars($service['title']); ?></li>
+        </ol>
+    </nav>
     <a href="?page=services" class="btn btn-secondary mb-4"><i class="fas fa-arrow-left"></i> <?php echo __('projects.back'); ?></a>
     
     <div class="row" data-aos="fade-up">
