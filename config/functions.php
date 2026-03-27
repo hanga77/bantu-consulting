@@ -8,10 +8,6 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-// Debug
-error_log("=== UPLOAD VIDEO DEBUG ===");
-error_log("FILES: " . json_encode($_FILES));
-error_log("POST: " . json_encode($_POST));
 
 try {
     // Vérifier si le fichier est présent

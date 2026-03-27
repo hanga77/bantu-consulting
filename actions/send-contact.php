@@ -7,6 +7,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
+    $_SESSION['error'] = 'Token de sécurité invalide.';
+    header('Location: ../?page=accueil#contact');
+    exit;
+}
+
 $name = htmlspecialchars($_POST['name'] ?? '');
 $email = htmlspecialchars($_POST['email'] ?? '');
 $message = htmlspecialchars($_POST['message'] ?? '');

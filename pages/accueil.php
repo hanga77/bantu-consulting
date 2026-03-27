@@ -138,7 +138,7 @@ $settings = getSiteSettings();
             <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
                 <div class="mb-4">
                     <h2 class="display-5 fw-bold mb-3">📍 Où nous trouver ?</h2>
-                    <p class="lead text-muted">Visitez-nous à notre siège social à Kinshasa</p>
+                    <p class="lead text-muted">Visitez-nous à notre siège social à : </p>
                 </div>
 
                 <div class="card border-0 shadow-sm mb-3">
@@ -265,6 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="card border-0 shadow-lg">
                     <div class="card-body p-4">
                         <form method="POST" action="actions/send-contact.php" id="contactForm">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                             <div class="mb-3">
                                 <label for="name" class="form-label fw-bold"><?php echo __('home.fullname'); ?></label>
                                 <input type="text" class="form-control form-control-lg" id="name" name="name" required>

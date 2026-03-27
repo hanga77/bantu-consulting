@@ -17,6 +17,7 @@ include 'templates/header.php';
                     <?php endif; ?>
                     
                     <form method="POST" action="actions/login.php">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                         <div class="mb-3">
                             <label for="username" class="form-label">Nom d'utilisateur</label>
                             <input type="text" class="form-control" id="username" name="username" required autofocus>

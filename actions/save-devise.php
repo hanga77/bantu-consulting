@@ -12,6 +12,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
+    $_SESSION['error'] = 'Token de sécurité invalide.';
+    header('Location: ../?page=admin-dashboard&section=devise');
+    exit;
+}
+
 $motto = trim($_POST['motto'] ?? '');
 $description = trim($_POST['description'] ?? '');
 

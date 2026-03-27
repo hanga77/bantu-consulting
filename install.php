@@ -5,7 +5,7 @@
  */
 
 // ⚠️ SÉCURITÉ: Vérifier que c'est une première installation
-define('INSTALLATION_TOKEN', 'CHANGE_ME_IN_PRODUCTION');
+define('INSTALLATION_TOKEN', bin2hex(random_bytes(16))); // Généré dynamiquement — accès impossible sans le token correct
 define('MAX_INSTALLATIONS', 1);
 
 // Vérifier le token d'installation

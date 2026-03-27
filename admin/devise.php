@@ -17,6 +17,7 @@ if (!$about) {
             </div>
             <div class="card-body">
                 <form method="POST" action="actions/save-devise.php">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                     <div class="mb-4">
                         <label for="motto" class="form-label fw-bold">Devise (Slogan)</label>
                         <input type="text" class="form-control form-control-lg" id="motto" name="motto" value="<?php echo htmlspecialchars($about['motto'] ?? ''); ?>" placeholder="Ex: Votre succès est notre mission" required>

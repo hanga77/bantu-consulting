@@ -52,6 +52,7 @@ $settings = getSiteSettings();
             </div>
             <div class="card-body">
                 <form method="POST" action="actions/save-settings.php">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                     <input type="hidden" name="section" value="general">
                     
                     <div class="row mb-3">
@@ -86,6 +87,7 @@ $settings = getSiteSettings();
             </div>
             <div class="card-body">
                 <form method="POST" action="actions/save-settings.php">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                     <input type="hidden" name="section" value="contact">
                     
                     <div class="row mb-3">
@@ -149,6 +151,7 @@ $settings = getSiteSettings();
             </div>
             <div class="card-body">
                 <form method="POST" action="actions/save-settings.php">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                     <input type="hidden" name="section" value="seo">
                     
                     <div class="mb-3">
@@ -211,6 +214,7 @@ $settings = getSiteSettings();
                         <!-- Formulaire upload -->
                         <h6 class="fw-bold mb-3"><i class="fas fa-upload"></i> Télécharger une nouvelle vidéo</h6>
                         <form method="POST" action="actions/save-settings-video.php" enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                             <div class="mb-3">
                                 <label for="presentation_video" class="form-label fw-bold">Fichier vidéo *</label>
                                 <input type="file" class="form-control form-control-lg" id="presentation_video" name="presentation_video" accept="video/mp4,video/webm" required>
@@ -279,6 +283,7 @@ $settings = getSiteSettings();
             </div>
             <div class="card-body">
                 <form method="POST" action="actions/save-settings.php">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                     <input type="hidden" name="section" value="location">
                     
                     <div class="row mb-3">

@@ -19,6 +19,7 @@ $services = $pdo->query("SELECT id, title FROM services ORDER BY created_at DESC
             </div>
             <div class="col-md-6" data-aos="fade-left">
                 <form id="newsletter-form" class="d-flex gap-2">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                     <input type="text" class="form-control" name="name" placeholder="Votre nom (optionnel)">
                     <input type="email" class="form-control" name="email" placeholder="Votre email" required>
                     <button type="submit" class="btn btn-warning fw-bold">S'abonner</button>
@@ -36,7 +37,7 @@ $services = $pdo->query("SELECT id, title FROM services ORDER BY created_at DESC
             <!-- About -->
             <div class="col-md-3">
                 <h5 class="mb-3"><i class="fas fa-building"></i> Bantu Consulting</h5>
-                <p class="text-light-50">Cabinet de conseil spécialisé en stratégie et transformation digitale.</p>
+                <p class="text-light-50"></p>
             </div>
             
             <!-- Quick Links -->
@@ -48,6 +49,28 @@ $services = $pdo->query("SELECT id, title FROM services ORDER BY created_at DESC
                     <li><a href="?page=projets" class="text-light-50 text-decoration-none">Projets</a></li>
                     <li><a href="?page=equipes" class="text-light-50 text-decoration-none">Équipes</a></li>
                     <li><a href="?page=apropos" class="text-light-50 text-decoration-none">À Propos</a></li>
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-shield"></i> <?php echo __('nav.admin'); ?>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="?page=admin-dashboard">
+                            <i class="fas fa-tachometer-alt"></i> <?php echo __('admin.dashboard'); ?>
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="actions/logout.php">
+                            <i class="fas fa-sign-out-alt"></i> <?php echo __('nav.logout'); ?>
+                        </a></li>
+                    </ul>
+                </li>
+                <?php else: ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="?page=admin-login">
+                        <i class="fas fa-lock"></i> <?php echo __('nav.admin'); ?>
+                    </a>
+                </li>
+                <?php endif; ?>
                 </ul>
             </div>
             
@@ -132,7 +155,7 @@ $services = $pdo->query("SELECT id, title FROM services ORDER BY created_at DESC
             <div class="col-md-6 text-center text-md-end">
                 <p class="text-light-50 mb-0">
                     Développé avec <i class="fas fa-heart text-danger"></i> par 
-                    <a href="#" class="text-light text-decoration-none">Bantu Consulting</a>
+                    <a href="#" class="text-light text-decoration-none">Hang7</a>
                 </p>
             </div>
         </div>

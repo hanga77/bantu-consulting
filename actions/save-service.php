@@ -7,6 +7,12 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
+    $_SESSION['error'] = 'Token de sécurité invalide.';
+    header('Location: ../?page=admin-dashboard&section=services');
+    exit;
+}
+
 $title = $_POST['title'] ?? '';
 $description = $_POST['description'] ?? '';
 $contact_email = $_POST['contact_email'] ?? '';

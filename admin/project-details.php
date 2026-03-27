@@ -68,6 +68,7 @@ $members = $stmt->fetchAll();
             </div>
             <div class="card-body">
                 <form method="POST" action="actions/update-project-details.php" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                     <input type="hidden" name="project_id" value="<?php echo $project['id']; ?>">
                     <input type="hidden" name="tab" value="info">
                     
@@ -169,6 +170,7 @@ $members = $stmt->fetchAll();
                 <!-- Ajouter nouvelles images -->
                 <h6 class="mb-3 fw-bold">Ajouter des images</h6>
                 <form method="POST" action="actions/update-project-details.php" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                     <input type="hidden" name="project_id" value="<?php echo $project['id']; ?>">
                     <input type="hidden" name="tab" value="gallery">
                     
@@ -251,6 +253,7 @@ $members = $stmt->fetchAll();
             </div>
             <form method="POST" action="actions/add-project-member.php">
                 <div class="modal-body">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                     <input type="hidden" name="project_id" value="<?php echo $project_id; ?>">
                     
                     <div class="mb-3">

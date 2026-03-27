@@ -1,6 +1,11 @@
 <?php
 session_start();
 
+// Générer le token CSRF
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 // Charger la base de données d'abord
 require_once 'config/database.php';
 

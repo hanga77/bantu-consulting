@@ -19,6 +19,7 @@ if (!isset($_SESSION['user_id'])) {
     </div>
     <div class="card-body">
         <form method="POST" action="actions/save-project.php" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">

@@ -1,8 +1,14 @@
 <?php
 /**
  * Script de migration - Ajoute les colonnes manquantes à la base de données
- * Accédez à http://localhost/Bantu-test2/migrate.php
+ * UTILISATION: CLI uniquement — php migrate.php
  */
+
+// Bloquer l'accès web
+if (isset($_SERVER['HTTP_HOST'])) {
+    http_response_code(403);
+    die('Accès refusé. Ce script doit être exécuté en ligne de commande uniquement.');
+}
 
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');

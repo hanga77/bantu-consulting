@@ -6,6 +6,15 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+// Timeout de session (30 min)
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 1800)) {
+    session_unset();
+    session_destroy();
+    header('Location: ?page=admin-login&timeout=1');
+    exit;
+}
+$_SESSION['last_activity'] = time();
+
 $section = $_GET['section'] ?? 'dashboard';
 $section = preg_replace('/[^a-z0-9_-]/', '', $section);
 ?>

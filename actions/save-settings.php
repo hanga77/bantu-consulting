@@ -7,6 +7,12 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
+    $_SESSION['error'] = 'Token de sécurité invalide.';
+    header('Location: ../?page=admin-dashboard&section=settings');
+    exit;
+}
+
 $section = $_POST['section'] ?? 'general';
 
 try {
@@ -26,7 +32,9 @@ try {
         }
         
         $allowed_types = ['video/mp4', 'video/webm', 'video/quicktime'];
-        if (!in_array($file['type'], $allowed_types)) {
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $real_mime = $finfo->file($file['tmp_name']);
+        if (!in_array($real_mime, $allowed_types)) {
             throw new Exception("Format vidéo non autorisé. Utilisez MP4 ou WebM.");
         }
         

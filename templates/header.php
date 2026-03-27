@@ -67,10 +67,12 @@ $current_lang = $_SESSION['lang'] ?? 'fr';
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" rel="stylesheet">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="assets/style.css">
-    
+    <?php $v = filemtime(__DIR__ . '/../assets/style.css') ?: time(); ?>
+    <link rel="stylesheet" href="assets/style.css?v=<?php echo $v; ?>">
+
     <!-- Toast Notifications -->
-    <script src="assets/js/toast.js"></script>
+    <?php $vjs = filemtime(__DIR__ . '/../assets/js/toast.js') ?: time(); ?>
+    <script src="assets/js/toast.js?v=<?php echo $vjs; ?>"></script>
     <style>
         :root {
             --primary: #1e40af;
@@ -298,28 +300,6 @@ $current_lang = $_SESSION['lang'] ?? 'fr';
                     </ul>
                 </li>
                 
-                <?php if (isset($_SESSION['user_id'])): ?>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-user-shield"></i> <?php echo __('nav.admin'); ?>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="?page=admin-dashboard">
-                            <i class="fas fa-tachometer-alt"></i> <?php echo __('admin.dashboard'); ?>
-                        </a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="actions/logout.php">
-                            <i class="fas fa-sign-out-alt"></i> <?php echo __('nav.logout'); ?>
-                        </a></li>
-                    </ul>
-                </li>
-                <?php else: ?>
-                <li class="nav-item">
-                    <a class="nav-link" href="?page=admin-login">
-                        <i class="fas fa-lock"></i> <?php echo __('nav.admin'); ?>
-                    </a>
-                </li>
-                <?php endif; ?>
             </ul>
         </div>
     </div>

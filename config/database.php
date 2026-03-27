@@ -28,7 +28,8 @@ try {
         ]
     );
 } catch (PDOException $e) {
-    die("Erreur de connexion à la base de données : " . htmlspecialchars($e->getMessage()));
+    error_log("DB connection error: " . $e->getMessage());
+    die("Erreur de connexion à la base de données. Veuillez réessayer plus tard.");
 }
 
 // Fonction pour récupérer les paramètres du site

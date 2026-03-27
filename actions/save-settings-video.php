@@ -8,6 +8,12 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
+    $_SESSION['error'] = 'Token de sécurité invalide.';
+    header('Location: ../?page=admin-dashboard&section=settings');
+    exit;
+}
+
 try {
     // Vérifier si le fichier est présent
     if (!isset($_FILES['presentation_video']) || $_FILES['presentation_video']['error'] === UPLOAD_ERR_NO_FILE) {
@@ -33,8 +39,10 @@ try {
     if ($file['size'] <= 0) throw new Exception("Fichier vide");
     
     $allowed_types = ['video/mp4', 'video/webm', 'video/quicktime'];
-    if (!in_array($file['type'], $allowed_types)) {
-        throw new Exception("Format non autorisé: " . $file['type']);
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $real_mime = $finfo->file($file['tmp_name']);
+    if (!in_array($real_mime, $allowed_types)) {
+        throw new Exception("Format non autorisé: " . $real_mime);
     }
     
     $max_size = 200 * 1024 * 1024;

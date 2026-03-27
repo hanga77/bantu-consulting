@@ -8,6 +8,12 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
+    $_SESSION['error'] = 'Token de sécurité invalide.';
+    header('Location: ../?page=admin-dashboard&section=contacts');
+    exit;
+}
+
 $status_filter = $_POST['status_filter'] ?? 'new';
 $subject = trim($_POST['subject'] ?? '');
 $response_message = trim($_POST['response_message'] ?? '');
@@ -20,13 +26,14 @@ if (empty($subject) || empty($response_message)) {
 
 try {
     // Déterminer les destinataires
-    $query = "SELECT id, email, name FROM contacts WHERE 1=1";
-    
-    if ($status_filter === 'new' || $status_filter === 'read') {
-        $query .= " AND status = '$status_filter'";
+    $allowed_statuses = ['new', 'read'];
+    if (in_array($status_filter, $allowed_statuses)) {
+        $stmt = $pdo->prepare("SELECT id, email, name FROM contacts WHERE status = ?");
+        $stmt->execute([$status_filter]);
+    } else {
+        $stmt = $pdo->query("SELECT id, email, name FROM contacts");
     }
-    
-    $contacts = $pdo->query($query)->fetchAll();
+    $contacts = $stmt->fetchAll();
     
     if (empty($contacts)) {
         $_SESSION['error'] = 'Aucun contact trouvé';
@@ -80,8 +87,9 @@ try {
     
     // Marquer comme lus
     if (!empty($contact_ids)) {
-        $ids = implode(',', $contact_ids);
-        $pdo->query("UPDATE contacts SET status = 'read' WHERE id IN ($ids)");
+        $placeholders = implode(',', array_fill(0, count($contact_ids), '?'));
+        $stmt = $pdo->prepare("UPDATE contacts SET status = 'read' WHERE id IN ($placeholders)");
+        $stmt->execute(array_map('intval', $contact_ids));
     }
     
     $_SESSION['success'] = "Réponses envoyées! ($sent_count envoyées, $failed_count erreurs)";

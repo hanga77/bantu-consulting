@@ -8,6 +8,12 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
+    $_SESSION['error'] = 'Token de sécurité invalide.';
+    header('Location: ../?page=admin-dashboard&section=teams');
+    exit;
+}
+
 $name = $_POST['name'] ?? '';
 $position = $_POST['position'] ?? '';
 $role = $_POST['role'] ?? '';

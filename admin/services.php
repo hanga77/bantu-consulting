@@ -68,6 +68,7 @@
     </div>
     <div class="card-body">
         <form method="POST" action="actions/save-service.php" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
             <!-- Info Basique -->
             <div class="card border-0 bg-light mb-3">
                 <div class="card-header bg-white">

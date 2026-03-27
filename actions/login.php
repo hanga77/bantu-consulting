@@ -7,6 +7,26 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
+    $_SESSION['error'] = 'Token de sécurité invalide.';
+    header('Location: ../?page=admin-login');
+    exit;
+}
+
+// Rate limiting : max 5 tentatives par 5 minutes par IP
+$rl_key = 'login_rl_' . md5($_SERVER['REMOTE_ADDR'] ?? '');
+$rl = $_SESSION[$rl_key] ?? ['count' => 0, 'since' => time()];
+if (time() - $rl['since'] > 300) {
+    $rl = ['count' => 0, 'since' => time()];
+}
+if ($rl['count'] >= 5) {
+    $_SESSION['error'] = 'Trop de tentatives. Réessayez dans 5 minutes.';
+    header('Location: ../?page=admin-login');
+    exit;
+}
+$rl['count']++;
+$_SESSION[$rl_key] = $rl;
+
 $username = $_POST['username'] ?? '';
 $password = $_POST['password'] ?? '';
 

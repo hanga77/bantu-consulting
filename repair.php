@@ -1,8 +1,14 @@
 <?php
 /**
  * Script de réparation - Corrige les tables existantes
- * À utiliser si vous avez une erreur sur order_pos
+ * UTILISATION: CLI uniquement — php repair.php
  */
+
+// Bloquer l'accès web
+if (isset($_SERVER['HTTP_HOST'])) {
+    http_response_code(403);
+    die('Accès refusé. Ce script doit être exécuté en ligne de commande uniquement.');
+}
 
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
