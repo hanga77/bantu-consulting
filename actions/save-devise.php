@@ -40,7 +40,7 @@ try {
     
     $_SESSION['success'] = 'Devise mise à jour avec succès';
 } catch (PDOException $e) {
-    $_SESSION['error'] = 'Erreur lors de la mise à jour : ' . $e->getMessage();
+    $_SESSION['error'] = safeErrorMessage($e);
 }
 
 header('Location: ../?page=admin-dashboard&section=devise');

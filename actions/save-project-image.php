@@ -61,7 +61,7 @@ try {
     $stmt->execute([$project_id, $image_file, $title, $description, $next_pos]);
     $_SESSION['success'] = 'Image ajoutée à la galerie !';
 } catch (PDOException $e) {
-    $_SESSION['error'] = 'Erreur lors de l\'ajout : ' . $e->getMessage();
+    $_SESSION['error'] = safeErrorMessage($e);
 }
 
 header('Location: ../?page=admin-dashboard&section=projects&action=gallery&id=' . $project_id);

@@ -28,7 +28,7 @@ try {
     $stmt->execute([$project_id, $member_name, $role]);
     $_SESSION['success'] = 'Membre ajouté !';
 } catch (Exception $e) {
-    $_SESSION['error'] = 'Erreur: ' . $e->getMessage();
+    $_SESSION['error'] = safeErrorMessage($e);
 }
 
 header("Location: ../?page=admin-dashboard&section=project-details&id=$project_id");

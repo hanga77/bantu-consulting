@@ -42,7 +42,7 @@ try {
             $image_width = $result['width'];
             $image_height = $result['height'];
         } catch (Exception $e) {
-            $_SESSION['error'] = 'Erreur image principale: ' . $e->getMessage();
+            $_SESSION['error'] = safeErrorMessage($e);
             header('Location: ../?page=admin-dashboard&section=projects');
             exit;
         }
@@ -119,7 +119,7 @@ try {
     }
 
 } catch (PDOException $e) {
-    $_SESSION['error'] = 'Erreur DB: ' . $e->getMessage();
+    $_SESSION['error'] = safeErrorMessage($e);
 }
 
 header('Location: ../?page=admin-dashboard&section=projects');

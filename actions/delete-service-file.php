@@ -40,7 +40,7 @@ try {
     
     $_SESSION['success'] = 'Fichier supprimé avec succès !';
 } catch (PDOException $e) {
-    $_SESSION['error'] = 'Erreur lors de la suppression: ' . $e->getMessage();
+    $_SESSION['error'] = safeErrorMessage($e);
 }
 
 header('Location: ../?page=admin-dashboard&section=services&action=edit&id=' . $service_id);

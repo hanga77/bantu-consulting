@@ -51,7 +51,7 @@
                         echo '<tr><td colspan="4" class="text-center text-muted py-4"><i class="fas fa-inbox"></i> Aucun service ajouté</td></tr>';
                     endif;
                 } catch (Exception $e) {
-                    echo '<tr><td colspan="4" class="text-center text-danger">Erreur: ' . htmlspecialchars($e->getMessage()) . '</td></tr>';
+                    echo '<tr><td colspan="4" class="text-center text-danger">Erreur: ' . safeErrorMessage($e) . '</td></tr>';
                 }
                 ?>
             </tbody>
@@ -480,7 +480,7 @@
                 </a>
             </div>
         </form>
-        <?php }} catch (Exception $e) { echo '<div class="alert alert-danger">Erreur: ' . htmlspecialchars($e->getMessage()) . '</div>'; } ?>
+        <?php }} catch (Exception $e) { echo '<div class="alert alert-danger">Erreur: ' . safeErrorMessage($e) . '</div>'; } ?>
     </div>
 </div>
 <?php endif; ?>

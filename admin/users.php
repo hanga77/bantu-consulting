@@ -101,7 +101,7 @@ if (!isset($_SESSION['user_id'])) {
                 </a>
             </div>
         </form>
-        <?php }} catch (Exception $e) { echo '<div class="alert alert-danger">Erreur: ' . htmlspecialchars($e->getMessage()) . '</div>'; } ?>
+        <?php }} catch (Exception $e) { echo '<div class="alert alert-danger">Erreur: ' . safeErrorMessage($e) . '</div>'; } ?>
     </div>
 </div>
 <?php endif; ?>
@@ -147,7 +147,7 @@ if (!isset($_SESSION['user_id'])) {
                 </tr>
                 <?php endforeach; else: ?>
                 <tr><td colspan="4" class="text-center text-muted py-3">Aucun utilisateur</td></tr>
-                <?php endif; } catch (Exception $e) { echo '<tr><td colspan="4" class="alert alert-danger mb-0">' . htmlspecialchars($e->getMessage()) . '</td></tr>'; } ?>
+                <?php endif; } catch (Exception $e) { echo '<tr><td colspan="4" class="alert alert-danger mb-0">' . safeErrorMessage($e) . '</td></tr>'; } ?>
             </tbody>
         </table>
     </div>

@@ -503,7 +503,7 @@ document.head.appendChild(style);
         `;
         document.head.appendChild(style);
         </script>
-        <?php }} catch (Exception $e) { echo '<div class="alert alert-danger">Erreur: ' . htmlspecialchars($e->getMessage()) . '</div>'; } ?>
+        <?php }} catch (Exception $e) { echo '<div class="alert alert-danger">Erreur: ' . safeErrorMessage($e) . '</div>'; } ?>
     </div>
 </div>
 <?php endif; ?>
@@ -551,7 +551,7 @@ document.head.appendChild(style);
                 </tr>
                 <?php endforeach; else: ?>
                 <tr><td colspan="6" class="text-center text-muted py-3">Aucun projet</td></tr>
-                <?php endif; } catch (Exception $e) { echo '<tr><td colspan="6" class="alert alert-danger mb-0">' . htmlspecialchars($e->getMessage()) . '</td></tr>'; } ?>
+                <?php endif; } catch (Exception $e) { echo '<tr><td colspan="6" class="alert alert-danger mb-0">' . safeErrorMessage($e) . '</td></tr>'; } ?>
             </tbody>
         </table>
     </div>

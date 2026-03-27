@@ -32,7 +32,7 @@ try {
     
     $_SESSION['success'] = 'Image supprimée avec succès!';
 } catch (Exception $e) {
-    $_SESSION['error'] = 'Erreur: ' . $e->getMessage();
+    $_SESSION['error'] = safeErrorMessage($e);
 }
 
 header('Location: ../?page=admin-dashboard&section=projects');

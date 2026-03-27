@@ -51,6 +51,20 @@ function getSiteSettings() {
     }
 }
 
+// Récupérer les services pour le footer
+function getFooterServices() {
+    global $pdo;
+    try {
+        return $pdo->query("SELECT id, title FROM services ORDER BY created_at DESC LIMIT 4")->fetchAll();
+    } catch (PDOException $e) {
+        return [];
+    }
+}
+
+// Inclure les fonctions de sécurité
+define('SESSION_TIMEOUT', 1800); // 30 minutes
+require_once __DIR__ . '/security.php';
+
 // Inclure les langues
 require_once __DIR__ . '/languages.php';
 ?>

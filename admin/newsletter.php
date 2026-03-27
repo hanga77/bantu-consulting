@@ -198,7 +198,7 @@ document.getElementById('message').addEventListener('input', function(e) {
                 <?php endforeach; else: ?>
                 <tr><td colspan="5" class="text-center text-muted py-4">Aucun abonné</td></tr>
                 <?php endif; } catch (Exception $e) {
-                    echo '<tr><td colspan="5" class="alert alert-danger mb-0">' . htmlspecialchars($e->getMessage()) . '</td></tr>';
+                    echo '<tr><td colspan="5" class="alert alert-danger mb-0">' . safeErrorMessage($e) . '</td></tr>';
                 } ?>
             </tbody>
         </table>

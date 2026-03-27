@@ -1,6 +1,6 @@
 <?php
 $settings = getSiteSettings();
-$services = $pdo->query("SELECT id, title FROM services ORDER BY created_at DESC LIMIT 4")->fetchAll();
+$services = getFooterServices();
 ?>
 </main>
 

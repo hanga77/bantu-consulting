@@ -1,4 +1,14 @@
 <?php
+/**
+ * Configuration des Langues - Système Hybride
+ * 
+ * Combine:
+ * 1. Traductions locales (array $translations)
+ * 2. API de traduction (TranslationAPI)
+ * 
+ * Priorité: Traductions locales > API
+ */
+
 // Initialiser la langue par défaut
 if (!isset($_SESSION['lang'])) {
     $_SESSION['lang'] = 'fr';
@@ -6,10 +16,10 @@ if (!isset($_SESSION['lang'])) {
 
 // Récupérer la langue depuis l'URL ou la session
 $lang = $_GET['lang'] ?? $_SESSION['lang'] ?? 'fr';
-$lang = in_array($lang, ['fr', 'en']) ? $lang : 'fr';
+$lang = in_array($lang, ['fr', 'en', 'es', 'pt', 'zh', 'ar', 'sw']) ? $lang : 'fr';
 $_SESSION['lang'] = $lang;
 
-// Tableau des traductions
+// Tableau des traductions locales (prioritaires)
 $translations = [
     'fr' => [
         // Navigation
@@ -224,18 +234,69 @@ $translations = [
         'footer.email' => 'Email',
         'footer.phone' => 'Phone',
         'footer.address' => 'Address',
-        
     ]
 ];
 
-// Fonction pour obtenir une traduction
-function __($key) {
-    global $translations, $lang;
-    return $translations[$lang][$key] ?? $key;
+/**
+ * Fonction de traduction améliorée
+ * Supporte:
+ * 1. Clés définies dans $translations (priorité)
+ * 2. API TranslationAPI pour contenu dynamique
+ */
+if (!function_exists('__')) {
+function __($key, $target_lang = null) {
+    global $translations, $lang, $translator;
+    
+    // Déterminer la langue cible
+    if ($target_lang === null) {
+        $target_lang = $lang;
+    }
+    
+    // Vérifier si c'est une clé de traduction locale (ex: 'nav.home')
+    if (strpos($key, '.') !== false || isset($translations[$target_lang][$key])) {
+        // C'est une clé de traduction
+        if (isset($translations[$target_lang][$key])) {
+            return $translations[$target_lang][$key];
+        }
+        // Fallback vers français
+        if (isset($translations['fr'][$key])) {
+            return $translations['fr'][$key];
+        }
+        return $key;
+    }
+    
+    // Sinon, utiliser l'API de traduction pour contenu dynamique
+    if ($target_lang === 'fr') {
+        return $key;
+    }
+    
+    // Si TranslationAPI est disponible, l'utiliser
+    if (isset($translator) && $translator instanceof TranslationAPI) {
+        return $translator->translate($key, $target_lang, 'fr');
+    }
+    
+    // Fallback: retourner le texte original
+    return $key;
+}
 }
 
-// Fonction pour obtenir la langue actuelle
+/**
+ * Fonction pour obtenir la langue actuelle
+ */
 function getLang() {
     return $_SESSION['lang'] ?? 'fr';
 }
+
+/**
+ * Fonction pour changer de langue
+ */
+function setLang($new_lang) {
+    global $lang;
+    if (in_array($new_lang, ['fr', 'en', 'es', 'pt', 'zh', 'ar', 'sw'])) {
+        $_SESSION['lang'] = $new_lang;
+        $lang = $new_lang;
+        setcookie('language', $new_lang, time() + 86400 * 365, '/');
+    }
+}
+
 ?>

@@ -35,9 +35,9 @@ $teams_no_dept = $pdo->query("SELECT * FROM teams WHERE department_id IS NULL OR
                         <p class="card-text mb-3">Leader du conseil en stratégie et transformation digitale.</p>
                         <hr class="bg-light">
                         <p class="mb-2"><strong><i class="fas fa-check-circle"></i> Mission</strong></p>
-                        <p class="text-light mb-3">Accompagner les entreprises dans leur transformation et croissance.</p>
+                        <p class="text-light mb-3"><?php echo htmlspecialchars($about['mission'] ?? 'Accompagner les entreprises dans leur transformation et croissance.'); ?></p>
                         <p class="mb-2"><strong><i class="fas fa-check-circle"></i> Vision</strong></p>
-                        <p class="text-light mb-0">Être le partenaire de confiance pour la réussite de vos projets.</p>
+                        <p class="text-light mb-0"><?php echo htmlspecialchars($about['vision'] ?? 'Être le partenaire de confiance pour la réussite de vos projets.'); ?></p>
                     </div>
                 </div>
             </div>

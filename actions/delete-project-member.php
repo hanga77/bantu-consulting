@@ -15,7 +15,7 @@ try {
     $stmt->execute([$id, $project_id]);
     $_SESSION['success'] = 'Membre supprimé !';
 } catch (Exception $e) {
-    $_SESSION['error'] = 'Erreur: ' . $e->getMessage();
+    $_SESSION['error'] = safeErrorMessage($e);
 }
 
 header("Location: ../?page=admin-dashboard&section=project-details&id=$project_id");

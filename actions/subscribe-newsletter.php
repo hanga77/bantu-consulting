@@ -59,7 +59,7 @@ try {
     }
     
 } catch (Exception $e) {
-    $response['message'] = $e->getMessage();
+    $response['message'] = safeErrorMessage($e);
 }
 
 header('Content-Type: application/json');

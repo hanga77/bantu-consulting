@@ -32,7 +32,7 @@ try {
     
     $_SESSION['success'] = 'Informations mises à jour !';
 } catch (PDOException $e) {
-    $_SESSION['error'] = 'Erreur: ' . $e->getMessage();
+    $_SESSION['error'] = safeErrorMessage($e);
 }
 
 header('Location: ../?page=admin-dashboard&section=about');

@@ -48,7 +48,7 @@ try {
             $image_height = $result['height'];
             
         } catch (Exception $e) {
-            $_SESSION['error'] = 'Erreur traitement image: ' . $e->getMessage();
+            $_SESSION['error'] = safeErrorMessage($e);
             header('Location: ../?page=admin-dashboard&section=teams');
             exit;
         }
@@ -96,7 +96,7 @@ try {
         $_SESSION['success'] = 'Membre ajouté avec succès !';
     }
 } catch (PDOException $e) {
-    $_SESSION['error'] = 'Erreur lors de l\'enregistrement : ' . $e->getMessage();
+    $_SESSION['error'] = safeErrorMessage($e);
 }
 
 header('Location: ../?page=admin-dashboard&section=teams');

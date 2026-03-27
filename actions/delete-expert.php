@@ -34,7 +34,7 @@ try {
     
     $_SESSION['success'] = 'Expert supprimé avec succès !';
 } catch (Exception $e) {
-    $_SESSION['error'] = 'Erreur: ' . $e->getMessage();
+    $_SESSION['error'] = safeErrorMessage($e);
 }
 
 header('Location: ../?page=admin-dashboard&section=experts');

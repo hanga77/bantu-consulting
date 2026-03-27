@@ -41,7 +41,7 @@ try {
         $_SESSION['success'] = 'Département créé avec succès !';
     }
 } catch (PDOException $e) {
-    $_SESSION['error'] = 'Erreur lors de l\'enregistrement: ' . $e->getMessage();
+    $_SESSION['error'] = safeErrorMessage($e);
 }
 
 header('Location: ../?page=admin-dashboard&section=departments');

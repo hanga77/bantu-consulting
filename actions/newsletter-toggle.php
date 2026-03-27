@@ -30,7 +30,7 @@ try {
 
     $_SESSION['success'] = 'Statut mis à jour avec succès!';
 } catch (Exception $e) {
-    $_SESSION['error'] = 'Erreur: ' . $e->getMessage();
+    $_SESSION['error'] = safeErrorMessage($e);
 }
 
 header('Location: ../?page=admin-dashboard&section=newsletter');

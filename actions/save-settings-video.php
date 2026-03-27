@@ -80,7 +80,7 @@ try {
     $_SESSION['success'] = 'Vidéo enregistrée !';
     
 } catch (Exception $e) {
-    $_SESSION['error'] = 'Erreur: ' . $e->getMessage();
+    $_SESSION['error'] = safeErrorMessage($e);
     error_log("Upload video: " . $e->getMessage());
 }
 

@@ -35,7 +35,7 @@ try {
             $result = processAndSaveImage($_FILES['image'], 'expert', 300, 350, 90);
             $image_file = $result['filename'];
         } catch (Exception $e) {
-            $_SESSION['error'] = 'Erreur traitement image: ' . $e->getMessage();
+            $_SESSION['error'] = safeErrorMessage($e);
             header('Location: ../?page=admin-dashboard&section=experts');
             exit;
         }
@@ -75,7 +75,7 @@ try {
         $_SESSION['success'] = 'Expert ajouté avec succès !';
     }
 } catch (PDOException $e) {
-    $_SESSION['error'] = 'Erreur lors de l\'enregistrement : ' . $e->getMessage();
+    $_SESSION['error'] = safeErrorMessage($e);
 }
 
 header('Location: ../?page=admin-dashboard&section=experts');

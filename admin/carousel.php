@@ -138,7 +138,7 @@ document.getElementById('image').addEventListener('change', function(e) {
                 <?php endforeach; else: ?>
                 <tr><td colspan="4" class="text-center text-muted py-4"><i class="fas fa-inbox"></i> Aucune image</td></tr>
                 <?php endif; } catch (Exception $e) {
-                    echo '<tr><td colspan="4" class="text-center text-danger">Erreur: ' . htmlspecialchars($e->getMessage()) . '</td></tr>';
+                    echo '<tr><td colspan="4" class="text-center text-danger">Erreur: ' . safeErrorMessage($e) . '</td></tr>';
                 } ?>
             </tbody>
         </table>

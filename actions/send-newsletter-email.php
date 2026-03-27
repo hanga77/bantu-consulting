@@ -84,7 +84,7 @@ try {
     $_SESSION['success'] = "Emails envoyés avec succès! ($sent_count envoyés, $failed_count erreurs)";
     
 } catch (Exception $e) {
-    $_SESSION['error'] = 'Erreur: ' . $e->getMessage();
+    $_SESSION['error'] = safeErrorMessage($e);
 }
 
 header('Location: ../?page=admin-dashboard&section=newsletter');

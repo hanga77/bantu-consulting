@@ -228,7 +228,7 @@ if (!isset($_SESSION['user_id'])) {
                 <?php endforeach; else: ?>
                 <tr><td colspan="6" class="text-center text-muted py-4">Aucun message</td></tr>
                 <?php endif; } catch (Exception $e) {
-                    echo '<tr><td colspan="6" class="alert alert-danger mb-0">' . htmlspecialchars($e->getMessage()) . '</td></tr>';
+                    echo '<tr><td colspan="6" class="alert alert-danger mb-0">' . safeErrorMessage($e) . '</td></tr>';
                 } ?>
             </tbody>
         </table>

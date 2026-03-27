@@ -30,7 +30,7 @@ try {
     $stmt->execute([$id]);
     $_SESSION['success'] = 'Département supprimé avec succès ! (Les membres conservent leurs données)';
 } catch (PDOException $e) {
-    $_SESSION['error'] = 'Erreur lors de la suppression: ' . $e->getMessage();
+    $_SESSION['error'] = safeErrorMessage($e);
 }
 
 header('Location: ../?page=admin-dashboard&section=departments');

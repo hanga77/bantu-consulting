@@ -19,7 +19,7 @@ try {
     $stmt->execute([$id]);
     $_SESSION['success'] = 'Projet supprimé avec succès !';
 } catch (PDOException $e) {
-    $_SESSION['error'] = 'Erreur: ' . $e->getMessage();
+    $_SESSION['error'] = safeErrorMessage($e);
 }
 
 header('Location: ../?page=admin-dashboard&section=projects');
