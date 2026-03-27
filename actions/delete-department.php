@@ -6,8 +6,13 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: ../?page=admin-login');
     exit;
 }
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
+    $_SESSION['error'] = 'Requête invalide.';
+    header('Location: ../?page=admin-dashboard&section=departments');
+    exit;
+}
 
-$id = intval($_GET['id'] ?? 0);
+$id = intval($_POST['id'] ?? 0);
 
 if ($id <= 0) {
     $_SESSION['error'] = 'ID invalide';

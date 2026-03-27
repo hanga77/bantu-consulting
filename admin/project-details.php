@@ -154,11 +154,11 @@ $members = $stmt->fetchAll();
                                 <small class="text-muted d-block mb-2">
                                     <i class="fas fa-sort"></i> Ordre: <strong><?php echo $img['order_pos']; ?></strong>
                                 </small>
-                                <a href="actions/delete-project-image.php?id=<?php echo $img['id']; ?>&return=details&project_id=<?php echo $project_id; ?>" 
-                                   class="btn btn-sm btn-danger w-100" 
-                                   onclick="return confirm('Supprimer cette image ?')">
-                                    <i class="fas fa-trash"></i> Supprimer
-                                </a>
+                                <form method="POST" action="actions/delete-project-image.php" onsubmit="return confirm('Supprimer cette image ?')">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
+                                    <input type="hidden" name="id" value="<?php echo $img['id']; ?>">
+                                    <button type="submit" class="btn btn-sm btn-danger w-100"><i class="fas fa-trash"></i> Supprimer</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -222,11 +222,12 @@ $members = $stmt->fetchAll();
                                 <td><strong><?php echo htmlspecialchars($member['member_name']); ?></strong></td>
                                 <td><?php echo htmlspecialchars($member['role']); ?></td>
                                 <td>
-                                    <a href="actions/delete-project-member.php?id=<?php echo $member['id']; ?>&project_id=<?php echo $project_id; ?>" 
-                                       class="btn btn-sm btn-danger"
-                                       onclick="return confirm('Supprimer ce membre ?')">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
+                                    <form method="POST" action="actions/delete-project-member.php" class="d-inline" onsubmit="return confirm('Supprimer ce membre ?')">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
+                                        <input type="hidden" name="id" value="<?php echo $member['id']; ?>">
+                                        <input type="hidden" name="project_id" value="<?php echo $project_id; ?>">
+                                        <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                    </form>
                                 </td>
                             </tr>
                             <?php endforeach; ?>

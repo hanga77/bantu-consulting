@@ -2,19 +2,22 @@
 session_start();
 require_once '../config/database.php';
 
-if (!isset($_SESSION['user_id'])) {
+if (!isset(['user_id'])) {
     header('Location: ../?page=admin-login');
     exit;
 }
-
-$id = intval($_GET['id'] ?? 0);
-
-if ($id > 0) {
-    $stmt = $pdo->prepare("DELETE FROM contacts WHERE id = ?");
-    $stmt->execute([$id]);
-    $_SESSION['success'] = 'Message supprimé';
+if (['REQUEST_METHOD'] !== 'POST' || !hash_equals(['csrf_token'] ?? '', ['csrf_token'] ?? '')) {
+    ['error'] = 'Requête invalide.';
+    header('Location: ../?page=admin-dashboard&section=');
+    exit;
 }
-
-header('Location: ../?page=admin-dashboard&section=contacts');
+ = intval(['id'] ?? 0);
+try {
+     = ->prepare("DELETE FROM  WHERE id = ?");
+    ->execute([]);
+    ['success'] = '';
+} catch (PDOException ) {
+    ['error'] = safeErrorMessage();
+}
+header('Location: ../?page=admin-dashboard&section=');
 exit;
-?>

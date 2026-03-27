@@ -2,26 +2,22 @@
 session_start();
 require_once '../config/database.php';
 
-if (!isset($_SESSION['user_id'])) {
+if (!isset(['user_id'])) {
     header('Location: ../?page=admin-login');
     exit;
 }
-
-if (!isset($_GET['id'])) {
-    $_SESSION['error'] = 'ID service manquant';
-    header('Location: ../?page=admin-dashboard&section=services');
+if (['REQUEST_METHOD'] !== 'POST' || !hash_equals(['csrf_token'] ?? '', ['csrf_token'] ?? '')) {
+    ['error'] = 'Requête invalide.';
+    header('Location: ../?page=admin-dashboard&section=');
     exit;
 }
-
+ = intval(['id'] ?? 0);
 try {
-    $id = intval($_GET['id']);
-    $stmt = $pdo->prepare("DELETE FROM services WHERE id = ?");
-    $stmt->execute([$id]);
-    $_SESSION['success'] = 'Service supprimé avec succès !';
-} catch (PDOException $e) {
-    $_SESSION['error'] = safeErrorMessage($e);
+     = ->prepare("DELETE FROM  WHERE id = ?");
+    ->execute([]);
+    ['success'] = '';
+} catch (PDOException ) {
+    ['error'] = safeErrorMessage();
 }
-
-header('Location: ../?page=admin-dashboard&section=services');
+header('Location: ../?page=admin-dashboard&section=');
 exit;
-?>

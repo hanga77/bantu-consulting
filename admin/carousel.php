@@ -128,11 +128,11 @@ document.getElementById('image').addEventListener('change', function(e) {
                     </td>
                     <td><span class="badge bg-primary"><?php echo $item['order_pos']; ?></span></td>
                     <td>
-                        <a href="actions/delete-carousel.php?id=<?php echo $item['id']; ?>" 
-                           class="btn btn-sm btn-danger" 
-                           onclick="return confirm('Confirmer la suppression ?')">
-                            <i class="fas fa-trash"></i>
-                        </a>
+                        <form method="POST" action="actions/delete-carousel.php" class="d-inline" onsubmit="return confirm('Confirmer la suppression ?')">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
+                            <input type="hidden" name="id" value="<?php echo $item['id']; ?>">
+                            <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                        </form>
                     </td>
                 </tr>
                 <?php endforeach; else: ?>

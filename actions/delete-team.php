@@ -2,20 +2,22 @@
 session_start();
 require_once '../config/database.php';
 
-if (!isset($_SESSION['user_id'])) {
+if (!isset(['user_id'])) {
     header('Location: ../?page=admin-login');
     exit;
 }
-
-$id = $_GET['id'] ?? 0;
-
-try {
-    $pdo->prepare("DELETE FROM teams WHERE id=?")->execute([$id]);
-    $_SESSION['success'] = 'Membre supprimé avec succès';
-} catch (PDOException $e) {
-    $_SESSION['error'] = 'Erreur lors de la suppression';
+if (['REQUEST_METHOD'] !== 'POST' || !hash_equals(['csrf_token'] ?? '', ['csrf_token'] ?? '')) {
+    ['error'] = 'Requête invalide.';
+    header('Location: ../?page=admin-dashboard&section=');
+    exit;
 }
-
-header('Location: ../?page=admin-dashboard&section=teams');
+ = intval(['id'] ?? 0);
+try {
+     = ->prepare("DELETE FROM  WHERE id = ?");
+    ->execute([]);
+    ['success'] = '';
+} catch (PDOException ) {
+    ['error'] = safeErrorMessage();
+}
+header('Location: ../?page=admin-dashboard&section=');
 exit;
-?>

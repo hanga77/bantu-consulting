@@ -6,9 +6,14 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: ../?page=admin-login');
     exit;
 }
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
+    $_SESSION['error'] = 'Requête invalide.';
+    header('Location: ../?page=admin-dashboard&section=projects');
+    exit;
+}
 
-$id = intval($_GET['id'] ?? 0);
-$project_id = intval($_GET['project_id'] ?? 0);
+$id = intval($_POST['id'] ?? 0);
+$project_id = intval($_POST['project_id'] ?? 0);
 
 try {
     $stmt = $pdo->prepare("DELETE FROM project_members WHERE id = ? AND project_id = ?");

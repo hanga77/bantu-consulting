@@ -6,9 +6,14 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: ../?page=admin-login');
     exit;
 }
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
+    $_SESSION['error'] = 'Requête invalide.';
+    header('Location: ../?page=admin-dashboard&section=services');
+    exit;
+}
 
-$file_id = intval($_GET['id'] ?? 0);
-$service_id = intval($_GET['service_id'] ?? 0);
+$file_id = intval($_POST['id'] ?? 0);
+$service_id = intval($_POST['service_id'] ?? 0);
 
 if ($file_id <= 0) {
     $_SESSION['error'] = 'Fichier invalide';

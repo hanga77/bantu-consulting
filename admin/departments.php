@@ -130,9 +130,11 @@
                         <a href="?page=admin-dashboard&section=departments&action=edit&id=<?php echo $dept['id']; ?>" class="btn btn-sm btn-warning">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <a href="actions/delete-department.php?id=<?php echo $dept['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Confirmer la suppression ? Les membres seront conservés sans département.')">
-                            <i class="fas fa-trash"></i>
-                        </a>
+                        <form method="POST" action="actions/delete-department.php" class="d-inline" onsubmit="return confirm('Confirmer la suppression ? Les membres seront conservés sans département.')">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
+                            <input type="hidden" name="id" value="<?php echo $dept['id']; ?>">
+                            <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                        </form>
                     </td>
                 </tr>
                 <?php endforeach; else: ?>

@@ -44,9 +44,11 @@
                         <a href="?page=admin-dashboard&section=teams&action=edit&id=<?php echo $team['id']; ?>" class="btn btn-sm btn-warning">
                             <i class="fas fa-edit"></i> 
                         </a>
-                        <a href="actions/delete-team.php?id=<?php echo $team['id']; ?>" onclick="return confirm('Êtes-vous sûr?');" class="btn btn-sm btn-danger">
-                            <i class="fas fa-trash"></i> 
-                        </a>
+                        <form method="POST" action="actions/delete-team.php" class="d-inline" onsubmit="return confirm('Supprimer ce membre ?')">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
+                            <input type="hidden" name="id" value="<?php echo $team['id']; ?>">
+                            <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                        </form>
                     </td>
                 </tr>
                 <?php 

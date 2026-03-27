@@ -40,9 +40,11 @@
                         <a href="?page=admin-dashboard&section=services&action=edit&id=<?php echo $service['id']; ?>" class="btn btn-sm btn-warning">
                             <i class="fas fa-edit"></i> 
                         </a>
-                        <a href="actions/delete-service.php?id=<?php echo $service['id']; ?>" onclick="return confirm('Êtes-vous sûr?');" class="btn btn-sm btn-danger">
-                            <i class="fas fa-trash"></i> 
-                        </a>
+                        <form method="POST" action="actions/delete-service.php" class="d-inline" onsubmit="return confirm('Supprimer ce service ?')">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
+                            <input type="hidden" name="id" value="<?php echo $service['id']; ?>">
+                            <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                        </form>
                     </td>
                 </tr>
                 <?php 
@@ -447,9 +449,12 @@
                                 <i class="fas fa-link text-info"></i> Lien: <?php echo htmlspecialchars($file['file_name']); ?>
                             <?php endif; ?>
                         </span>
-                        <a href="actions/delete-service-file.php?id=<?php echo $file['id']; ?>&service_id=<?php echo $service_id; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer ?')">
-                            <i class="fas fa-trash"></i>
-                        </a>
+                        <form method="POST" action="actions/delete-service-file.php" class="d-inline" onsubmit="return confirm('Supprimer ce fichier ?')">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
+                            <input type="hidden" name="id" value="<?php echo $file['id']; ?>">
+                            <input type="hidden" name="service_id" value="<?php echo $service_id; ?>">
+                            <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                        </form>
                     </div>
                     <?php endforeach; else: ?>
                     <p class="text-muted">Aucun fichier</p>

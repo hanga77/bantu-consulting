@@ -362,9 +362,11 @@ document.head.appendChild(style);
                                 <div style="border-radius: 8px; overflow: hidden; border: 2px solid #dee2e6;">
                                     <img src="uploads/<?php echo htmlspecialchars($img['image']); ?>" alt="Galerie" style="width: 100%; height: 150px; object-fit: cover; display: block;">
                                 </div>
-                                <a href="actions/delete-project-image.php?id=<?php echo $img['id']; ?>" class="btn btn-sm btn-danger mt-2 w-100" onclick="return confirm('Supprimer cette image ?')">
-                                    <i class="fas fa-trash"></i> Supprimer
-                                </a>
+                                <form method="POST" action="actions/delete-project-image.php" class="mt-2" onsubmit="return confirm('Supprimer cette image ?')">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
+                                    <input type="hidden" name="id" value="<?php echo $img['id']; ?>">
+                                    <button type="submit" class="btn btn-sm btn-danger w-100"><i class="fas fa-trash"></i> Supprimer</button>
+                                </form>
                             </div>
                             <?php endforeach; ?>
                         </div>
@@ -544,9 +546,11 @@ document.head.appendChild(style);
                         <a href="?page=admin-dashboard&section=projects&action=edit&id=<?php echo $p['id']; ?>" class="btn btn-sm btn-warning" title="Modifier">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <a href="actions/delete-project.php?id=<?php echo $p['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Confirmer la suppression ?')" title="Supprimer">
-                            <i class="fas fa-trash"></i>
-                        </a>
+                        <form method="POST" action="actions/delete-project.php" class="d-inline" onsubmit="return confirm('Confirmer la suppression ?')">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
+                            <input type="hidden" name="id" value="<?php echo $p['id']; ?>">
+                            <button type="submit" class="btn btn-sm btn-danger" title="Supprimer"><i class="fas fa-trash"></i></button>
+                        </form>
                     </td>
                 </tr>
                 <?php endforeach; else: ?>

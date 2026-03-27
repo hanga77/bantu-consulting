@@ -180,11 +180,11 @@ if (!isset($_SESSION['user_id'])) {
                            class="btn btn-sm btn-warning">
                             <i class="fas fa-check"></i>
                         </a>
-                        <a href="actions/delete-contact.php?id=<?php echo $contact['id']; ?>" 
-                           class="btn btn-sm btn-danger" 
-                           onclick="return confirm('Supprimer?')">
-                            <i class="fas fa-trash"></i>
-                        </a>
+                        <form method="POST" action="actions/delete-contact.php" class="d-inline" onsubmit="return confirm('Supprimer ce message ?')">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
+                            <input type="hidden" name="id" value="<?php echo $contact['id']; ?>">
+                            <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                        </form>
                     </td>
                 </tr>
 

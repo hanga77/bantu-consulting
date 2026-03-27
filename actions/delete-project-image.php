@@ -7,9 +7,14 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: ../?page=admin-login');
     exit;
 }
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
+    $_SESSION['error'] = 'Requête invalide.';
+    header('Location: ../?page=admin-dashboard&section=projects');
+    exit;
+}
 
 try {
-    $image_id = intval($_GET['id'] ?? 0);
+    $image_id = intval($_POST['id'] ?? 0);
     
     if ($image_id === 0) {
         throw new Exception('ID image invalide');

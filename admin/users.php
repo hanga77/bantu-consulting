@@ -136,9 +136,11 @@ if (!isset($_SESSION['user_id'])) {
                             <i class="fas fa-edit"></i>
                         </a>
                         <?php if ($u['id'] !== $_SESSION['user_id']): ?>
-                        <a href="actions/delete-user.php?id=<?php echo $u['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Confirmer la suppression de cet utilisateur ?')">
-                            <i class="fas fa-trash"></i>
-                        </a>
+                        <form method="POST" action="actions/delete-user.php" class="d-inline" onsubmit="return confirm('Confirmer la suppression de cet utilisateur ?')">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
+                            <input type="hidden" name="id" value="<?php echo $u['id']; ?>">
+                            <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                        </form>
                         
                         <?php else: ?>
                         <span class="badge bg-secondary">Votre compte</span>

@@ -188,11 +188,11 @@ document.getElementById('message').addEventListener('input', function(e) {
                             <i class="fas fa-toggle-<?php echo $sub['status'] === 'active' ? 'on' : 'off'; ?>"></i>
                             <?php echo $sub['status'] === 'active' ? 'Désabonner' : 'Réabonner'; ?>
                         </a>
-                        <a href="actions/delete-newsletter-subscriber.php?id=<?php echo $sub['id']; ?>" 
-                           class="btn btn-sm btn-danger" 
-                           onclick="return confirm('Supprimer définitivement?')">
-                            <i class="fas fa-trash"></i>
-                        </a>
+                        <form method="POST" action="actions/newsletter-delete.php" class="d-inline" onsubmit="return confirm('Supprimer définitivement ?')">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
+                            <input type="hidden" name="id" value="<?php echo $sub['id']; ?>">
+                            <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                        </form>
                     </td>
                 </tr>
                 <?php endforeach; else: ?>

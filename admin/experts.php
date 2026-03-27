@@ -49,9 +49,11 @@ if (!isset($_SESSION['user_id'])) {
                         <a href="?page=admin-dashboard&section=experts&action=edit&id=<?php echo $expert['id']; ?>" class="btn btn-sm btn-warning">
                             <i class="fas fa-edit"></i> 
                         </a>
-                        <a href="actions/delete-expert.php?id=<?php echo $expert['id']; ?>" onclick="return confirm('Êtes-vous sûr?');" class="btn btn-sm btn-danger">
-                            <i class="fas fa-trash"></i> 
-                        </a>
+                        <form method="POST" action="actions/delete-expert.php" class="d-inline" onsubmit="return confirm('Supprimer cet expert ?')">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
+                            <input type="hidden" name="id" value="<?php echo $expert['id']; ?>">
+                            <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                        </form>
                     </td>
                 </tr>
                 <?php 
