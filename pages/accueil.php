@@ -14,7 +14,11 @@ $settings = getSiteSettings();
             <?php if (!empty($carousel)): ?>
                 <?php foreach ($carousel as $index => $item): ?>
                 <div class="carousel-item <?php echo $index === 0 ? 'active' : ''; ?>" style="height: 600px;">
-                    <img src="uploads/<?php echo htmlspecialchars($item['image']); ?>" class="d-block w-100 h-100" alt="" style="object-fit: cover;">
+                    <img src="uploads/<?php echo htmlspecialchars($item['image']); ?>"
+                         class="d-block w-100 h-100"
+                         alt="<?php echo htmlspecialchars($item['title']); ?>"
+                         <?php echo $index > 0 ? 'loading="lazy"' : 'fetchpriority="high"'; ?>
+                         style="object-fit: cover;">
                     <div class="carousel-caption d-md-block">
                         <h1 class="display-3 fw-bold" data-aos="fade-up"><?php echo htmlspecialchars($item['title']); ?></h1>
                         <p class="lead mt-3" data-aos="fade-up" data-aos-delay="100"><?php echo htmlspecialchars($item['description']); ?></p>

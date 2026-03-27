@@ -31,7 +31,11 @@ $members = $stmt->fetchAll();
             
             <!-- Image principale -->
             <?php if (!empty($project['image'])): ?>
-            <img src="uploads/<?php echo htmlspecialchars($project['image']); ?>" class="img-fluid rounded mb-4 shadow-lg" alt="" style="max-height: 500px; object-fit: cover; width: 100%;">
+            <img src="uploads/<?php echo htmlspecialchars($project['image']); ?>"
+                 class="img-fluid rounded mb-4 shadow-lg"
+                 alt="<?php echo htmlspecialchars($project['title']); ?>"
+                 fetchpriority="high"
+                 style="max-height: 500px; object-fit: cover; width: 100%;">
             <?php endif; ?>
             
             <h3 class="mt-4 mb-3">Description</h3>
@@ -45,7 +49,11 @@ $members = $stmt->fetchAll();
                 <div class="col-md-4">
                     <a href="uploads/<?php echo htmlspecialchars($image['image']); ?>" data-lightbox="project-gallery" data-title="<?php echo htmlspecialchars($image['title'] ?? ''); ?>">
                         <div class="card card-hover border-0 shadow-sm overflow-hidden">
-                            <img src="uploads/<?php echo htmlspecialchars($image['image']); ?>" class="card-img-top" alt="" style="height: 200px; object-fit: cover;">
+                            <img src="uploads/<?php echo htmlspecialchars($image['image']); ?>"
+                                 class="card-img-top"
+                                 alt="<?php echo htmlspecialchars($image['title'] ?? $project['title']); ?>"
+                                 loading="lazy"
+                                 style="height: 200px; object-fit: cover;">
                             <?php if (!empty($image['title'])): ?>
                             <div class="card-body">
                                 <h6 class="card-title"><?php echo htmlspecialchars($image['title']); ?></h6>

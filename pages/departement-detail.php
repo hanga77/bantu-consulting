@@ -53,8 +53,10 @@ $members = $stmt->fetchAll();
                     <div class="row g-0">
                         <div class="col-md-4 position-relative">
                             <?php if (!empty($member['image'])): ?>
-                            <img src="uploads/<?php echo htmlspecialchars($member['image']); ?>" 
-                                 class="img-fluid h-100 rounded-start" alt="<?php echo htmlspecialchars($member['name']); ?>" 
+                            <img src="uploads/<?php echo htmlspecialchars($member['image']); ?>"
+                                 class="img-fluid h-100 rounded-start"
+                                 alt="<?php echo htmlspecialchars($member['name']); ?>"
+                                 loading="lazy"
                                  style="object-fit: cover; min-height: 250px; cursor: pointer;">
                             <?php else: ?>
                             <div class="bg-secondary text-white d-flex align-items-center justify-content-center h-100 rounded-start" style="min-height: 250px;">
@@ -93,8 +95,10 @@ $members = $stmt->fetchAll();
                         <div class="row">
                             <div class="col-md-5 mb-3 mb-md-0">
                                 <?php if (!empty($member['image'])): ?>
-                                <img src="uploads/<?php echo htmlspecialchars($member['image']); ?>" 
-                                     class="img-fluid rounded" alt="<?php echo htmlspecialchars($member['name']); ?>" 
+                                <img src="uploads/<?php echo htmlspecialchars($member['image']); ?>"
+                                     class="img-fluid rounded"
+                                     alt="<?php echo htmlspecialchars($member['name']); ?>"
+                                     loading="lazy"
                                      style="max-height: 400px; object-fit: cover; width: 100%;">
                                 <?php endif; ?>
                             </div>

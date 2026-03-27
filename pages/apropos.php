@@ -60,8 +60,10 @@ $teams_no_dept = $pdo->query("SELECT * FROM teams WHERE department_id IS NULL OR
                 <div class="card h-100 border-0 shadow-sm card-hover team-card-circular">
                     <div class="team-info-overlay d-flex justify-content-center mb-3">
                         <?php if (!empty($member['image'])): ?>
-                        <img src="uploads/<?php echo htmlspecialchars($member['image']); ?>" 
-                             class="team-avatar" alt="<?php echo htmlspecialchars($member['name']); ?>">
+                        <img src="uploads/<?php echo htmlspecialchars($member['image']); ?>"
+                             class="team-avatar"
+                             alt="<?php echo htmlspecialchars($member['name']); ?>"
+                             loading="lazy">
                         <?php else: ?>
                         <div class="team-avatar bg-secondary text-white d-flex align-items-center justify-content-center">
                             <i class="fas fa-user fa-3x"></i>
@@ -132,8 +134,10 @@ $teams_no_dept = $pdo->query("SELECT * FROM teams WHERE department_id IS NULL OR
                 <div class="card h-100 border-0 shadow-sm card-hover team-card-circular">
                     <div class="team-info-overlay d-flex justify-content-center mb-3">
                         <?php if (!empty($member['image'])): ?>
-                        <img src="uploads/<?php echo htmlspecialchars($member['image']); ?>" 
-                             class="team-avatar" alt="<?php echo htmlspecialchars($member['name']); ?>">
+                        <img src="uploads/<?php echo htmlspecialchars($member['image']); ?>"
+                             class="team-avatar"
+                             alt="<?php echo htmlspecialchars($member['name']); ?>"
+                             loading="lazy">
                         <?php else: ?>
                         <div class="team-avatar bg-secondary text-white d-flex align-items-center justify-content-center">
                             <i class="fas fa-user fa-3x"></i>

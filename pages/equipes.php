@@ -2,6 +2,13 @@
 include 'templates/header.php';
 
 $departments = $pdo->query("SELECT * FROM departments ORDER BY FIELD(name, 'Pôle LBC/FT', 'Pôle DCA/DID/DIDH', 'Département RH', 'Département GCTD')")->fetchAll();
+
+// Charger tous les membres en une seule requête — élimine le N+1
+$all_teams = $pdo->query("SELECT * FROM teams ORDER BY importance DESC, name")->fetchAll();
+$teams_by_dept = [];
+foreach ($all_teams as $t) {
+    $teams_by_dept[(int)$t['department_id']][] = $t;
+}
 ?>
 
 <div class="container py-5">
@@ -36,11 +43,7 @@ $departments = $pdo->query("SELECT * FROM departments ORDER BY FIELD(name, 'Pôl
                 </div>
             </div>
             
-            <?php
-            $stmt = $pdo->prepare("SELECT * FROM teams WHERE department_id = ? ORDER BY importance DESC, name");
-            $stmt->execute([$dept['id']]);
-            $members = $stmt->fetchAll();
-            ?>
+            <?php $members = $teams_by_dept[(int)$dept['id']] ?? []; ?>
             
             <?php if (!empty($members)): ?>
                 <!-- RESPONSABLE EN ÉVIDENCE -->
@@ -57,8 +60,10 @@ $departments = $pdo->query("SELECT * FROM departments ORDER BY FIELD(name, 'Pôl
                             <div class="row g-0">
                                 <div class="col-md-5 position-relative overflow-hidden">
                                     <?php if (!empty($members[0]['image'])): ?>
-                                    <img src="uploads/<?php echo htmlspecialchars($members[0]['image']); ?>" 
-                                         class="img-fluid w-100" alt="<?php echo htmlspecialchars($members[0]['name']); ?>" 
+                                    <img src="uploads/<?php echo htmlspecialchars($members[0]['image']); ?>"
+                                         class="img-fluid w-100"
+                                         alt="<?php echo htmlspecialchars($members[0]['name']); ?>"
+                                         loading="lazy"
                                          style="object-fit: cover; min-height: 300px; transition: transform 0.3s;">
                                     <?php else: ?>
                                     <div class="bg-secondary text-white d-flex align-items-center justify-content-center w-100" style="min-height: 300px;">
@@ -103,8 +108,10 @@ $departments = $pdo->query("SELECT * FROM departments ORDER BY FIELD(name, 'Pôl
                              style="cursor: pointer;">
                             <div class="position-relative overflow-hidden">
                                 <?php if (!empty($member['image'])): ?>
-                                <img src="uploads/<?php echo htmlspecialchars($member['image']); ?>" 
-                                     class="card-img-top w-100" alt="<?php echo htmlspecialchars($member['name']); ?>" 
+                                <img src="uploads/<?php echo htmlspecialchars($member['image']); ?>"
+                                     class="card-img-top w-100"
+                                     alt="<?php echo htmlspecialchars($member['name']); ?>"
+                                     loading="lazy"
                                      style="height: 300px; object-fit: cover; transition: transform 0.3s;">
                                 <?php else: ?>
                                 <div class="bg-secondary text-white d-flex align-items-center justify-content-center w-100" style="height: 300px;">
@@ -181,12 +188,7 @@ $departments = $pdo->query("SELECT * FROM departments ORDER BY FIELD(name, 'Pôl
 
 <!-- MODALES -->
 <?php foreach ($departments as $dept): ?>
-    <?php
-    $stmt = $pdo->prepare("SELECT * FROM teams WHERE department_id = ?");
-    $stmt->execute([$dept['id']]);
-    $members = $stmt->fetchAll();
-    foreach ($members as $member):
-    ?>
+    <?php foreach ($teams_by_dept[(int)$dept['id']] ?? [] as $member): ?>
     <div class="modal fade" id="memberModal<?php echo $member['id']; ?>" tabindex="-1" aria-labelledby="modalLabel<?php echo $member['id']; ?>" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content border-0 shadow-lg">
@@ -198,8 +200,10 @@ $departments = $pdo->query("SELECT * FROM departments ORDER BY FIELD(name, 'Pôl
                     <div class="row">
                         <div class="col-md-5 mb-3 mb-md-0">
                             <?php if (!empty($member['image'])): ?>
-                            <img src="uploads/<?php echo htmlspecialchars($member['image']); ?>" 
-                                 class="img-fluid rounded" alt="<?php echo htmlspecialchars($member['name']); ?>" 
+                            <img src="uploads/<?php echo htmlspecialchars($member['image']); ?>"
+                                 class="img-fluid rounded"
+                                 alt="<?php echo htmlspecialchars($member['name']); ?>"
+                                 loading="lazy"
                                  style="max-height: 400px; object-fit: cover; width: 100%;">
                             <?php endif; ?>
                         </div>
